@@ -1,0 +1,144 @@
+import { useState } from 'react';
+import { useNavigate, Link } from 'react-router-dom';
+import { useAuth } from '../context/AuthContext';
+import { motion } from 'framer-motion';
+import { UserPlus, Mail, Lock, User, Loader2, Sparkles, ChevronRight } from 'lucide-react';
+import toast from 'react-hot-toast';
+
+const Register = () => {
+    const [formData, setFormData] = useState({
+        username: '',
+        email: '',
+        password: '',
+        confirmPassword: ''
+    });
+    const [loading, setLoading] = useState(false);
+    const { signUp } = useAuth();
+    const navigate = useNavigate();
+
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        if (formData.password !== formData.confirmPassword) {
+            return toast.error('Passwords do not match');
+        }
+
+        setLoading(true);
+        try {
+            const { error } = await signUp(formData.email, formData.password, {
+                username: formData.username
+            });
+            if (error) throw error;
+            toast.success('Validation sent! Check your inbox.');
+            navigate('/login');
+        } catch (error) {
+            toast.error(error.message || 'Failed to initialize account');
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    return (
+        <div className="min-h-screen flex items-center justify-center p-6 bg-slate-950 overflow-hidden relative font-sans">
+            <div className="absolute top-[20%] right-[-5%] w-[50%] h-[50%] bg-purple-600/10 rounded-full blur-[120px] animate-mesh"></div>
+
+            <motion.div
+                initial={{ opacity: 0, x: 20 }}
+                animate={{ opacity: 1, x: 0 }}
+                className="w-full max-w-[480px] z-10"
+            >
+                <div className="glass-panel p-10 rounded-[40px]">
+                    <div className="mb-10">
+                        <h1 className="text-4xl font-black text-white mb-3 tracking-tighter">
+                            Create <span className="text-purple-500 italic">Account.</span>
+                        </h1>
+                        <p className="text-slate-500 font-bold uppercase tracking-widest text-xs">Start your premium experience</p>
+                    </div>
+
+                    <form onSubmit={handleSubmit} className="space-y-4">
+                        <div className="space-y-1">
+                            <label className="text-[10px] font-black text-slate-600 uppercase tracking-widest ml-1">Identity</label>
+                            <div className="relative">
+                                <User className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-500" size={18} />
+                                <input
+                                    required
+                                    value={formData.username}
+                                    onChange={(e) => setFormData({ ...formData, username: e.target.value })}
+                                    className="w-full bg-slate-900 border border-white/5 rounded-2xl py-4 pl-12 pr-6 focus:ring-2 focus:ring-purple-500/50 outline-none transition-all text-white font-medium"
+                                    placeholder="Full Name"
+                                />
+                            </div>
+                        </div>
+
+                        <div className="space-y-1">
+                            <label className="text-[10px] font-black text-slate-600 uppercase tracking-widest ml-1">Email Address</label>
+                            <div className="relative">
+                                <Mail className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-500" size={18} />
+                                <input
+                                    type="email"
+                                    required
+                                    value={formData.email}
+                                    onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                                    className="w-full bg-slate-900 border border-white/5 rounded-2xl py-4 pl-12 pr-6 focus:ring-2 focus:ring-purple-500/50 outline-none transition-all text-white font-medium"
+                                    placeholder="name@mail.com"
+                                />
+                            </div>
+                        </div>
+
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            <div className="space-y-1">
+                                <label className="text-[10px] font-black text-slate-600 uppercase tracking-widest ml-1">Security</label>
+                                <div className="relative">
+                                    <Lock className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-500" size={18} />
+                                    <input
+                                        type="password"
+                                        required
+                                        value={formData.password}
+                                        onChange={(e) => setFormData({ ...formData, password: e.target.value })}
+                                        className="w-full bg-slate-900 border border-white/5 rounded-2xl py-4 pl-12 pr-6 focus:ring-2 focus:ring-purple-500/50 outline-none transition-all text-white font-medium text-sm"
+                                        placeholder="••••••••"
+                                    />
+                                </div>
+                            </div>
+                            <div className="space-y-1">
+                                <label className="text-[10px] font-black text-slate-600 uppercase tracking-widest ml-1">Confirm</label>
+                                <div className="relative">
+                                    <Lock className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-500" size={18} />
+                                    <input
+                                        type="password"
+                                        required
+                                        value={formData.confirmPassword}
+                                        onChange={(e) => setFormData({ ...formData, confirmPassword: e.target.value })}
+                                        className="w-full bg-slate-900 border border-white/5 rounded-2xl py-4 pl-12 pr-6 focus:ring-2 focus:ring-purple-500/50 outline-none transition-all text-white font-medium text-sm"
+                                        placeholder="••••••••"
+                                    />
+                                </div>
+                            </div>
+                        </div>
+
+                        <button
+                            type="submit"
+                            disabled={loading}
+                            className="w-full bg-purple-600 hover:bg-purple-500 text-white font-black py-4 rounded-2xl shadow-2xl shadow-purple-600/40 transition-all flex items-center justify-center gap-3 depth-button active:scale-[0.98] mt-6"
+                        >
+                            {loading ? <Loader2 className="animate-spin" /> : (
+                                <>
+                                    Create Account
+                                    <UserPlus size={20} />
+                                </>
+                            )}
+                        </button>
+                    </form>
+
+                    <div className="mt-10 pt-8 border-t border-white/5 text-center text-sm font-bold">
+                        <span className="text-slate-500">Member already?</span>{' '}
+                        <Link to="/login" className="text-white hover:text-purple-500 transition-colors uppercase tracking-widest text-[10px] ml-2 underline underline-offset-4">
+                            Switch to Login
+                        </Link>
+                    </div>
+                </div>
+            </motion.div>
+        </div>
+    );
+};
+
+export default Register;
