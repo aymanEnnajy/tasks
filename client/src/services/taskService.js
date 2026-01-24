@@ -50,6 +50,10 @@ export const TaskService = {
         return await supabase.from('tasks').insert(taskData).select().single();
     },
 
+    updateTask: async (id, taskData) => {
+        return await supabase.from('tasks').update(taskData).eq('id', id).select().single();
+    },
+
     toggleTask: async (id, currentStatus) => {
         return await supabase.from('tasks').update({ completed: !currentStatus }).eq('id', id);
     },

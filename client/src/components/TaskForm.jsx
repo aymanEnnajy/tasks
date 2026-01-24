@@ -4,7 +4,7 @@ import { useAuth } from '../context/AuthContext';
 import { Plus, Loader2, Globe, List, Layout, CheckCircle2, Type, AlignLeft } from 'lucide-react';
 import toast from 'react-hot-toast';
 
-const TaskForm = ({ onSuccess, categories: initialCategories }) => {
+const TaskForm = ({ onSuccess, categories: initialCategories, task = null }) => {
     const { user, dbUserId } = useAuth();
     const [loading, setLoading] = useState(false);
     const [subCategories, setSubCategories] = useState([]);
@@ -31,10 +31,31 @@ const TaskForm = ({ onSuccess, categories: initialCategories }) => {
 
     useEffect(() => {
         if (dbUserId) {
-            setFormData(prev => ({ ...prev, owner_id: dbUserId }));
+            if (task) {
+                setFormData({
+                    title: task.title || '',
+                    description: task.description || '',
+                    category_id: task.category_id || '',
+                    sub_category_id: task.sub_category_id || '',
+                    site_id: task.site_id || '',
+                    date: task.date || new Date().toISOString().split('T')[0],
+                    end_day: task.end_day || '',
+                    owner_id: dbUserId,
+                    completed: task.completed || false
+                });
+
+                if (task.category_id) {
+                    TaskService.getSubCategories(parseInt(task.category_id), dbUserId)
+                        .then(({ data }) => {
+                            if (data) setSubCategories(data);
+                        });
+                }
+            } else {
+                setFormData(prev => ({ ...prev, owner_id: dbUserId }));
+            }
             fetchSites();
         }
-    }, [dbUserId]);
+    }, [dbUserId, task]);
 
     useEffect(() => {
         if (initialCategories) setCategories(initialCategories);
@@ -130,24 +151,28 @@ const TaskForm = ({ onSuccess, categories: initialCategories }) => {
 
         setLoading(true);
         try {
-            // FIX: Convert empty strings to null for integer columns to avoid "invalid input syntax" error
+            // FIX: Convert empty strings to null for integer columns and date columns to avoid "invalid input syntax" error
             const submissionData = {
                 ...formData,
                 owner_id: dbUserId,
                 category_id: formData.category_id ? parseInt(formData.category_id) : null,
                 sub_category_id: formData.sub_category_id ? parseInt(formData.sub_category_id) : null,
-                site_id: formData.site_id ? parseInt(formData.site_id) : null
+                site_id: formData.site_id ? parseInt(formData.site_id) : null,
+                end_day: formData.end_day || null // Convert empty string to null for date column
             };
 
-            const { error } = await TaskService.createTask(submissionData);
+            const { error } = task
+                ? await TaskService.updateTask(task.id, submissionData)
+                : await TaskService.createTask(submissionData);
+
             if (error) {
                 toast.error(error.message);
             } else {
-                toast.success('Insight recorded successfully!');
+                toast.success(task ? 'Insight refactored!' : 'Insight recorded successfully!');
                 onSuccess();
             }
         } catch (err) {
-            toast.error('Submission failed');
+            toast.error(task ? 'Refactor failed' : 'Submission failed');
         } finally {
             setLoading(false);
         }

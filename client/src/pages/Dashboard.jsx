@@ -5,7 +5,7 @@ import {
     LayoutDashboard, LogOut, Plus, Settings,
     Briefcase, GraduationCap, Trophy, Apple,
     Search, Bell, Download, Filter, Menu, X,
-    TrendingUp, Users, Target, Rocket, Trash2, CheckCircle2, Loader2
+    TrendingUp, Users, Target, Rocket, Trash2, CheckCircle2, Loader2, Edit2
 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { TaskService } from '../services/taskService';
@@ -18,6 +18,7 @@ const Dashboard = () => {
     const [tasks, setTasks] = useState([]);
     const [categories, setCategories] = useState([]);
     const [isTaskModalOpen, setIsTaskModalOpen] = useState(false);
+    const [editingTask, setEditingTask] = useState(null);
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
@@ -64,6 +65,11 @@ const Dashboard = () => {
         } catch (error) {
             toast.error('Delete failed');
         }
+    };
+
+    const handleEditTask = (task) => {
+        setEditingTask(task);
+        setIsTaskModalOpen(true);
     };
 
     const IconMap = { Briefcase, GraduationCap, Trophy, Apple };
@@ -154,6 +160,7 @@ const Dashboard = () => {
                                     index={idx}
                                     onToggle={() => handleToggleTask(task.id, task.completed)}
                                     onDelete={() => handleDeleteTask(task.id)}
+                                    onEdit={() => handleEditTask(task)}
                                 />
                             ))
                         ) : (
@@ -211,13 +218,18 @@ const Dashboard = () => {
 
             <Modal
                 isOpen={isTaskModalOpen}
-                onClose={() => setIsTaskModalOpen(false)}
-                title="Register Data Row"
+                onClose={() => {
+                    setIsTaskModalOpen(false);
+                    setEditingTask(null);
+                }}
+                title={editingTask ? "Refactor Object" : "Register Data Row"}
             >
                 <TaskForm
                     categories={categories}
+                    task={editingTask}
                     onSuccess={() => {
                         setIsTaskModalOpen(false);
+                        setEditingTask(null);
                         fetchData();
                     }}
                 />
@@ -246,7 +258,7 @@ const CategoryCard = ({ icon: Icon, name, tasks, color, index }) => (
     </motion.div>
 );
 
-const TaskRow = ({ task, onToggle, onDelete, index }) => (
+const TaskRow = ({ task, onToggle, onDelete, onEdit, index }) => (
     <motion.div
         initial={{ opacity: 0, x: -20 }}
         animate={{ opacity: 1, x: 0 }}
@@ -274,12 +286,20 @@ const TaskRow = ({ task, onToggle, onDelete, index }) => (
             </div>
         </div>
 
-        <button
-            onClick={onDelete}
-            className="p-3 text-slate-700 hover:text-rose-500 hover:bg-rose-500/10 rounded-2xl transition-all"
-        >
-            <Trash2 size={20} />
-        </button>
+        <div className="flex items-center gap-2">
+            <button
+                onClick={onEdit}
+                className="p-3 text-slate-700 hover:text-blue-500 hover:bg-blue-500/10 rounded-2xl transition-all"
+            >
+                <Edit2 size={20} />
+            </button>
+            <button
+                onClick={onDelete}
+                className="p-3 text-slate-700 hover:text-rose-500 hover:bg-rose-500/10 rounded-2xl transition-all"
+            >
+                <Trash2 size={20} />
+            </button>
+        </div>
     </motion.div>
 );
 
