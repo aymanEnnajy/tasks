@@ -28,8 +28,8 @@ const Register = () => {
                 username: formData.username
             });
             if (error) throw error;
-            toast.success('Validation sent! Check your inbox.');
-            navigate('/login');
+            toast.success('Account created! Welcome onboard. 🚀');
+            navigate('/dashboard');
         } catch (error) {
             toast.error(error.message || 'Failed to initialize account');
         } finally {

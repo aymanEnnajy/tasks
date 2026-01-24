@@ -2,13 +2,24 @@ import { supabase } from './supabase';
 
 export const TaskService = {
     // Categories
-    getCategories: async () => {
-        return await supabase.from('categories').select('*');
+    getCategories: async (userId) => {
+        return await supabase.from('categories').select('*').eq('owner_id', userId);
+    },
+
+    addCategory: async (categoryData) => {
+        return await supabase.from('categories').insert(categoryData).select().single();
     },
 
     // Sub-categories
-    getSubCategories: async (categoryId) => {
-        return await supabase.from('sub_categories').select('*').eq('category_id', categoryId);
+    getSubCategories: async (categoryId, userId) => {
+        return await supabase.from('sub_categories')
+            .select('*')
+            .eq('category_id', categoryId)
+            .eq('owner_id', userId);
+    },
+
+    addSubCategory: async (subCategoryData) => {
+        return await supabase.from('sub_categories').insert(subCategoryData).select().single();
     },
 
     // Sites

@@ -4,13 +4,19 @@ import { useAuth } from '../context/AuthContext';
 import { Plus, Loader2, Globe, List, Layout, CheckCircle2, Type, AlignLeft } from 'lucide-react';
 import toast from 'react-hot-toast';
 
-const TaskForm = ({ onSuccess, categories }) => {
-    const { user } = useAuth();
+const TaskForm = ({ onSuccess, categories: initialCategories }) => {
+    const { user, dbUserId } = useAuth();
     const [loading, setLoading] = useState(false);
     const [subCategories, setSubCategories] = useState([]);
     const [sites, setSites] = useState([]);
+    const [categories, setCategories] = useState(initialCategories || []);
+
     const [showAddSite, setShowAddSite] = useState(false);
     const [newSiteName, setNewSiteName] = useState('');
+    const [showAddCategory, setShowAddCategory] = useState(false);
+    const [newCategoryName, setNewCategoryName] = useState('');
+    const [showAddSubCategory, setShowAddSubCategory] = useState(false);
+    const [newSubCategoryName, setNewSubCategoryName] = useState('');
 
     const [formData, setFormData] = useState({
         title: '',
@@ -19,30 +25,41 @@ const TaskForm = ({ onSuccess, categories }) => {
         sub_category_id: '',
         site_id: '',
         date: new Date().toISOString().split('T')[0],
-        owner_id: user?.id,
+        owner_id: dbUserId,
         completed: false
     });
 
     useEffect(() => {
-        if (user) fetchSites();
-    }, [user]);
+        if (dbUserId) {
+            setFormData(prev => ({ ...prev, owner_id: dbUserId }));
+            fetchSites();
+        }
+    }, [dbUserId]);
+
+    useEffect(() => {
+        if (initialCategories) setCategories(initialCategories);
+    }, [initialCategories]);
 
     const fetchSites = async () => {
-        const { data } = await TaskService.getSites(user?.id);
+        const { data } = await TaskService.getSites(dbUserId);
         if (data) setSites(data);
     };
 
     const handleCategoryChange = async (catId) => {
         setFormData({ ...formData, category_id: catId, sub_category_id: '' });
-        const { data } = await TaskService.getSubCategories(parseInt(catId));
-        if (data) setSubCategories(data);
+        if (catId) {
+            const { data } = await TaskService.getSubCategories(parseInt(catId), dbUserId);
+            if (data) setSubCategories(data);
+        } else {
+            setSubCategories([]);
+        }
     };
 
     const handleAddSite = async () => {
         if (!newSiteName.trim()) return;
         setLoading(true);
         try {
-            const { data } = await TaskService.addSite({ name: newSiteName, owner_id: user.id });
+            const { data } = await TaskService.addSite({ name: newSiteName, owner_id: dbUserId });
             if (data) {
                 setSites([...sites, data]);
                 setFormData({ ...formData, site_id: data.id });
@@ -57,13 +74,72 @@ const TaskForm = ({ onSuccess, categories }) => {
         }
     };
 
+    const handleAddCategory = async () => {
+        if (!newCategoryName.trim()) return;
+        setLoading(true);
+        try {
+            const { data, error } = await TaskService.addCategory({
+                name: newCategoryName,
+                icon: 'Briefcase',
+                color_gradient: 'from-blue-600 to-indigo-700',
+                owner_id: dbUserId
+            });
+            if (data) {
+                setCategories([...categories, data]);
+                setFormData({ ...formData, category_id: data.id, sub_category_id: '' });
+                setNewCategoryName('');
+                setShowAddCategory(false);
+                toast.success('Category architecture deployed!');
+            }
+            if (error) throw error;
+        } catch (err) {
+            toast.error('Category sync failed');
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    const handleAddSubCategory = async () => {
+        if (!newSubCategoryName.trim() || !formData.category_id) return;
+        setLoading(true);
+        try {
+            const { data, error } = await TaskService.addSubCategory({
+                name: newSubCategoryName,
+                category_id: parseInt(formData.category_id),
+                owner_id: dbUserId
+            });
+            if (data) {
+                setSubCategories([...subCategories, data]);
+                setFormData({ ...formData, sub_category_id: data.id });
+                setNewSubCategoryName('');
+                setShowAddSubCategory(false);
+                toast.success('Specialization modularized!');
+            }
+            if (error) throw error;
+        } catch (err) {
+            toast.error('Sub-category sync failed');
+        } finally {
+            setLoading(false);
+        }
+    };
+
     const handleSubmit = async (e) => {
         e.preventDefault();
         if (!formData.category_id) return toast.error('Please select a domain/category');
+        if (!dbUserId) return toast.error('User identification failed. Please re-login.');
 
         setLoading(true);
         try {
-            const { error } = await TaskService.createTask(formData);
+            // FIX: Convert empty strings to null for integer columns to avoid "invalid input syntax" error
+            const submissionData = {
+                ...formData,
+                owner_id: dbUserId,
+                category_id: formData.category_id ? parseInt(formData.category_id) : null,
+                sub_category_id: formData.sub_category_id ? parseInt(formData.sub_category_id) : null,
+                site_id: formData.site_id ? parseInt(formData.site_id) : null
+            };
+
+            const { error } = await TaskService.createTask(submissionData);
             if (error) {
                 toast.error(error.message);
             } else {
@@ -109,41 +185,96 @@ const TaskForm = ({ onSuccess, categories }) => {
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div className="space-y-3">
-                    <label className="text-[11px] font-black text-slate-500 uppercase tracking-[3px] ml-1">Category</label>
-                    <div className="relative">
-                        <Layout className="absolute left-5 top-1/2 -translate-y-1/2 text-slate-600" size={20} />
-                        <select
-                            required
-                            value={formData.category_id}
-                            onChange={(e) => handleCategoryChange(e.target.value)}
-                            className="w-full bg-slate-950/50 border border-white/5 rounded-[24px] py-5 pl-14 pr-10 focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500 outline-none transition-all text-white font-bold appearance-none cursor-pointer"
+                    <div className="flex justify-between items-center px-1">
+                        <label className="text-[11px] font-black text-slate-500 uppercase tracking-[3px]">Category</label>
+                        <button
+                            type="button"
+                            onClick={() => setShowAddCategory(!showAddCategory)}
+                            className="text-[10px] font-black text-blue-500 hover:text-white uppercase tracking-[2px] transition-colors"
                         >
-                            <option value="" className="bg-slate-950">Select Module</option>
-                            {categories.map(cat => (
-                                <option key={cat.id} value={cat.id} className="bg-slate-950">{cat.name}</option>
-                            ))}
-                        </select>
-                        <div className="absolute right-5 top-1/2 -translate-y-1/2 pointer-events-none opacity-40 text-white">▼</div>
+                            {showAddCategory ? '[ Cancel ]' : '[ + New ]'}
+                        </button>
                     </div>
+                    {showAddCategory ? (
+                        <div className="flex gap-2">
+                            <input
+                                value={newCategoryName}
+                                onChange={(e) => setNewCategoryName(e.target.value)}
+                                className="flex-1 bg-slate-950 border border-blue-500/50 rounded-[24px] py-4 px-6 focus:ring-4 focus:ring-blue-500/20 outline-none transition-all text-white font-bold text-sm"
+                                placeholder="Category Name..."
+                            />
+                            <button
+                                type="button"
+                                onClick={handleAddCategory}
+                                className="bg-blue-600 px-4 rounded-[20px] font-black text-white hover:bg-blue-500 transition-all text-[10px] tracking-widest uppercase"
+                            >
+                                Add
+                            </button>
+                        </div>
+                    ) : (
+                        <div className="relative">
+                            <Layout className="absolute left-5 top-1/2 -translate-y-1/2 text-slate-600" size={20} />
+                            <select
+                                required
+                                value={formData.category_id}
+                                onChange={(e) => handleCategoryChange(e.target.value)}
+                                className="w-full bg-slate-950/50 border border-white/5 rounded-[24px] py-5 pl-14 pr-10 focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500 outline-none transition-all text-white font-bold appearance-none cursor-pointer"
+                            >
+                                <option value="" className="bg-slate-950">Select Module</option>
+                                {categories.map(cat => (
+                                    <option key={cat.id} value={cat.id} className="bg-slate-950">{cat.name}</option>
+                                ))}
+                            </select>
+                            <div className="absolute right-5 top-1/2 -translate-y-1/2 pointer-events-none opacity-40 text-white">▼</div>
+                        </div>
+                    )}
                 </div>
 
                 <div className="space-y-3">
-                    <label className="text-[11px] font-black text-slate-500 uppercase tracking-[3px] ml-1">Specialization</label>
-                    <div className="relative">
-                        <List className="absolute left-5 top-1/2 -translate-y-1/2 text-slate-600" size={20} />
-                        <select
-                            value={formData.sub_category_id}
-                            onChange={(e) => setFormData({ ...formData, sub_category_id: e.target.value })}
-                            className="w-full bg-slate-950/50 border border-white/5 rounded-[24px] py-5 pl-14 pr-10 focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500 outline-none transition-all text-white font-bold appearance-none cursor-pointer disabled:opacity-20"
+                    <div className="flex justify-between items-center px-1">
+                        <label className="text-[11px] font-black text-slate-500 uppercase tracking-[3px]">Specialization</label>
+                        <button
+                            type="button"
                             disabled={!formData.category_id}
+                            onClick={() => setShowAddSubCategory(!showAddSubCategory)}
+                            className="text-[10px] font-black text-blue-500 hover:text-white uppercase tracking-[2px] transition-colors disabled:opacity-20"
                         >
-                            <option value="" className="bg-slate-950">Select Skillset</option>
-                            {subCategories.map(sub => (
-                                <option key={sub.id} value={sub.id} className="bg-slate-950">{sub.name}</option>
-                            ))}
-                        </select>
-                        <div className="absolute right-5 top-1/2 -translate-y-1/2 pointer-events-none opacity-40 text-white">▼</div>
+                            {showAddSubCategory ? '[ Cancel ]' : '[ + New ]'}
+                        </button>
                     </div>
+                    {showAddSubCategory ? (
+                        <div className="flex gap-2">
+                            <input
+                                value={newSubCategoryName}
+                                onChange={(e) => setNewSubCategoryName(e.target.value)}
+                                className="flex-1 bg-slate-950 border border-blue-500/50 rounded-[24px] py-4 px-6 focus:ring-4 focus:ring-blue-500/20 outline-none transition-all text-white font-bold text-sm"
+                                placeholder="Sub-category..."
+                            />
+                            <button
+                                type="button"
+                                onClick={handleAddSubCategory}
+                                className="bg-blue-600 px-4 rounded-[20px] font-black text-white hover:bg-blue-500 transition-all text-[10px] tracking-widest uppercase"
+                            >
+                                Add
+                            </button>
+                        </div>
+                    ) : (
+                        <div className="relative">
+                            <List className="absolute left-5 top-1/2 -translate-y-1/2 text-slate-600" size={20} />
+                            <select
+                                value={formData.sub_category_id}
+                                onChange={(e) => setFormData({ ...formData, sub_category_id: e.target.value })}
+                                className="w-full bg-slate-950/50 border border-white/5 rounded-[24px] py-5 pl-14 pr-10 focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500 outline-none transition-all text-white font-bold appearance-none cursor-pointer disabled:opacity-20"
+                                disabled={!formData.category_id}
+                            >
+                                <option value="" className="bg-slate-950">Select Skillset</option>
+                                {subCategories.map(sub => (
+                                    <option key={sub.id} value={sub.id} className="bg-slate-950">{sub.name}</option>
+                                ))}
+                            </select>
+                            <div className="absolute right-5 top-1/2 -translate-y-1/2 pointer-events-none opacity-40 text-white">▼</div>
+                        </div>
+                    )}
                 </div>
             </div>
 

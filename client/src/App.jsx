@@ -4,6 +4,11 @@ import { AuthProvider, useAuth } from './context/AuthContext';
 import Login from './pages/Login';
 import Register from './pages/Register';
 import Dashboard from './pages/Dashboard';
+import MyTasks from './pages/MyTasks';
+import Analytics from './pages/Analytics';
+import Schedule from './pages/Schedule';
+import Account from './pages/Account';
+import Layout from './components/Layout';
 
 // Protected Route Component
 const ProtectedRoute = ({ children }) => {
@@ -34,7 +39,37 @@ function App() {
                         <Route path="/register" element={<Register />} />
                         <Route path="/dashboard" element={
                             <ProtectedRoute>
-                                <Dashboard />
+                                <Layout>
+                                    <Dashboard />
+                                </Layout>
+                            </ProtectedRoute>
+                        } />
+                        <Route path="/tasks" element={
+                            <ProtectedRoute>
+                                <Layout>
+                                    <MyTasks />
+                                </Layout>
+                            </ProtectedRoute>
+                        } />
+                        <Route path="/analytics" element={
+                            <ProtectedRoute>
+                                <Layout>
+                                    <Analytics />
+                                </Layout>
+                            </ProtectedRoute>
+                        } />
+                        <Route path="/schedule" element={
+                            <ProtectedRoute>
+                                <Layout>
+                                    <Schedule />
+                                </Layout>
+                            </ProtectedRoute>
+                        } />
+                        <Route path="/account" element={
+                            <ProtectedRoute>
+                                <Layout>
+                                    <Account />
+                                </Layout>
                             </ProtectedRoute>
                         } />
                         <Route path="/" element={<Navigate to="/dashboard" />} />
