@@ -2,13 +2,16 @@ import { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { motion } from 'framer-motion';
-import { Rocket, Mail, Lock, ChevronRight, Loader2, Sparkles } from 'lucide-react';
+import { Rocket, Mail, Lock, ChevronRight, Loader2, Sparkles, Eye, EyeOff } from 'lucide-react';
 import toast from 'react-hot-toast';
+import ForgotPasswordModal from '../components/ForgotPasswordModal';
 
 const Login = () => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
+    const [showPassword, setShowPassword] = useState(false);
     const [loading, setLoading] = useState(false);
+    const [showForgotModal, setShowForgotModal] = useState(false);
     const { signIn } = useAuth();
     const navigate = useNavigate();
 
@@ -76,18 +79,31 @@ const Login = () => {
                         <div className="space-y-2">
                             <div className="flex justify-between items-center ml-1">
                                 <label className="text-xs font-bold text-slate-500 uppercase tracking-[2px]">Password</label>
-                                <button type="button" className="text-xs text-blue-500 hover:text-blue-400 font-bold">Forgot?</button>
+                                <button 
+                                    type="button" 
+                                    onClick={() => setShowForgotModal(true)}
+                                    className="text-xs text-blue-500 hover:text-blue-400 font-bold"
+                                >
+                                    Forgot?
+                                </button>
                             </div>
                             <div className="relative">
                                 <Lock className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-500" size={18} />
                                 <input
-                                    type="password"
+                                    type={showPassword ? 'text' : 'password'}
                                     required
                                     value={password}
                                     onChange={(e) => setPassword(e.target.value)}
-                                    className="w-full bg-slate-900/50 border border-white/5 rounded-2xl py-4 pl-12 pr-6 focus:ring-2 focus:ring-blue-500/50 focus:bg-slate-900 outline-none transition-all text-white font-medium"
+                                    className="w-full bg-slate-900/50 border border-white/5 rounded-2xl py-4 pl-12 pr-14 focus:ring-2 focus:ring-blue-500/50 focus:bg-slate-900 outline-none transition-all text-white font-medium"
                                     placeholder="••••••••"
                                 />
+                                <button
+                                    type="button"
+                                    onClick={() => setShowPassword(!showPassword)}
+                                    className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-500 hover:text-blue-500 transition-colors"
+                                >
+                                    {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                                </button>
                             </div>
                         </div>
 
@@ -113,6 +129,8 @@ const Login = () => {
                     </div>
                 </div>
             </motion.div>
+
+            <ForgotPasswordModal isOpen={showForgotModal} onClose={() => setShowForgotModal(false)} />
         </div>
     );
 };

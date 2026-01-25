@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { motion } from 'framer-motion';
-import { UserPlus, Mail, Lock, User, Loader2, Sparkles, ChevronRight } from 'lucide-react';
+import { UserPlus, Mail, Lock, User, Loader2, Sparkles, ChevronRight, Eye, EyeOff } from 'lucide-react';
 import toast from 'react-hot-toast';
 
 const Register = () => {
@@ -11,6 +11,10 @@ const Register = () => {
         email: '',
         password: '',
         confirmPassword: ''
+    });
+    const [showPasswords, setShowPasswords] = useState({
+        password: false,
+        confirmPassword: false
     });
     const [loading, setLoading] = useState(false);
     const { signUp } = useAuth();
@@ -90,13 +94,20 @@ const Register = () => {
                                 <div className="relative">
                                     <Lock className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-500" size={18} />
                                     <input
-                                        type="password"
+                                        type={showPasswords.password ? 'text' : 'password'}
                                         required
                                         value={formData.password}
                                         onChange={(e) => setFormData({ ...formData, password: e.target.value })}
-                                        className="w-full bg-slate-900 border border-white/5 rounded-2xl py-4 pl-12 pr-6 focus:ring-2 focus:ring-purple-500/50 outline-none transition-all text-white font-medium text-sm"
+                                        className="w-full bg-slate-900 border border-white/5 rounded-2xl py-4 pl-12 pr-12 focus:ring-2 focus:ring-purple-500/50 outline-none transition-all text-white font-medium text-sm"
                                         placeholder="••••••••"
                                     />
+                                    <button
+                                        type="button"
+                                        onClick={() => setShowPasswords({ ...showPasswords, password: !showPasswords.password })}
+                                        className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-500 hover:text-purple-500 transition-colors"
+                                    >
+                                        {showPasswords.password ? <EyeOff size={16} /> : <Eye size={16} />}
+                                    </button>
                                 </div>
                             </div>
                             <div className="space-y-1">
@@ -104,13 +115,20 @@ const Register = () => {
                                 <div className="relative">
                                     <Lock className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-500" size={18} />
                                     <input
-                                        type="password"
+                                        type={showPasswords.confirmPassword ? 'text' : 'password'}
                                         required
                                         value={formData.confirmPassword}
                                         onChange={(e) => setFormData({ ...formData, confirmPassword: e.target.value })}
-                                        className="w-full bg-slate-900 border border-white/5 rounded-2xl py-4 pl-12 pr-6 focus:ring-2 focus:ring-purple-500/50 outline-none transition-all text-white font-medium text-sm"
+                                        className="w-full bg-slate-900 border border-white/5 rounded-2xl py-4 pl-12 pr-12 focus:ring-2 focus:ring-purple-500/50 outline-none transition-all text-white font-medium text-sm"
                                         placeholder="••••••••"
                                     />
+                                    <button
+                                        type="button"
+                                        onClick={() => setShowPasswords({ ...showPasswords, confirmPassword: !showPasswords.confirmPassword })}
+                                        className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-500 hover:text-purple-500 transition-colors"
+                                    >
+                                        {showPasswords.confirmPassword ? <EyeOff size={16} /> : <Eye size={16} />}
+                                    </button>
                                 </div>
                             </div>
                         </div>

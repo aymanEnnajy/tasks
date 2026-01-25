@@ -27,7 +27,7 @@ const Dashboard = () => {
     const [deleteConfirmation, setDeleteConfirmation] = useState({ isOpen: false, taskId: null });
     const [currentPage, setCurrentPage] = useState(1);
     const [showFilters, setShowFilters] = useState(false);
-    const [filters, setFilters] = useState({ status: 'all', category: 'all', hasDeadline: 'all' });
+    const [filters, setFilters] = useState({ status: 'all', category: 'all', hasDeadline: 'all', dateFrom: '', dateTo: '' });
 
     useEffect(() => {
         if (dbUserId) fetchData();
@@ -104,7 +104,23 @@ const Dashboard = () => {
             (filters.hasDeadline === 'hasDeadline' && t.end_day) ||
             (filters.hasDeadline === 'noDeadline' && !t.end_day);
         
-        return matchesStatus && matchesCategory && matchesDeadline;
+        // Date range filter
+        let matchesDateRange = true;
+        if (filters.dateFrom || filters.dateTo) {
+            const taskDate = new Date(t.created_at);
+            if (filters.dateFrom) {
+                const fromDate = new Date(filters.dateFrom);
+                fromDate.setHours(0, 0, 0, 0);
+                matchesDateRange = matchesDateRange && taskDate >= fromDate;
+            }
+            if (filters.dateTo) {
+                const toDate = new Date(filters.dateTo);
+                toDate.setHours(23, 59, 59, 999);
+                matchesDateRange = matchesDateRange && taskDate <= toDate;
+            }
+        }
+        
+        return matchesStatus && matchesCategory && matchesDeadline && matchesDateRange;
     });
 
     const completedTasks = filteredTasks.filter(t => t.completed).length;
@@ -231,13 +247,44 @@ const Dashboard = () => {
                         </div>
                     </div>
 
+                    {/* Date Range Filter */}
+                    <div className="mt-6">
+                        <label className="text-sm font-bold text-slate-400 uppercase tracking-wider block mb-3">Created Date Range</label>
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div>
+                                <label className="text-xs text-slate-500 block mb-2">From</label>
+                                <input
+                                    type="date"
+                                    value={filters.dateFrom}
+                                    onChange={(e) => {
+                                        setFilters({ ...filters, dateFrom: e.target.value });
+                                        setCurrentPage(1);
+                                    }}
+                                    className="w-full bg-slate-800/50 border border-white/10 rounded-xl py-2 px-4 text-white font-bold text-sm focus:ring-2 focus:ring-blue-500/50 outline-none"
+                                />
+                            </div>
+                            <div>
+                                <label className="text-xs text-slate-500 block mb-2">To</label>
+                                <input
+                                    type="date"
+                                    value={filters.dateTo}
+                                    onChange={(e) => {
+                                        setFilters({ ...filters, dateTo: e.target.value });
+                                        setCurrentPage(1);
+                                    }}
+                                    className="w-full bg-slate-800/50 border border-white/10 rounded-xl py-2 px-4 text-white font-bold text-sm focus:ring-2 focus:ring-blue-500/50 outline-none"
+                                />
+                            </div>
+                        </div>
+                    </div>
+
                     {/* Reset Filters Button */}
                     <div className="mt-6 flex gap-4">
                         <motion.button
                             whileHover={{ scale: 1.02 }}
                             whileTap={{ scale: 0.98 }}
                             onClick={() => {
-                                setFilters({ status: 'all', category: 'all', hasDeadline: 'all' });
+                                setFilters({ status: 'all', category: 'all', hasDeadline: 'all', dateFrom: '', dateTo: '' });
                                 setCurrentPage(1);
                             }}
                             className="px-6 py-2 bg-slate-700 hover:bg-slate-600 text-white font-bold rounded-xl transition-colors"

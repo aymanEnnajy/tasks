@@ -1,8 +1,8 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { motion } from 'framer-motion';
 import {
     CheckSquare, Search, Filter, Plus,
-    Loader2, Trash2, Edit2, ChevronLeft, ChevronRight, Download, ExternalLink
+    Loader2, Trash2, Edit2, ChevronLeft, ChevronRight, Download, ExternalLink, Upload
 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { TaskService } from '../services/taskService';
@@ -21,6 +21,7 @@ const Articles = () => {
     const [editingArticle, setEditingArticle] = useState(null);
     const [deleteConfirmation, setDeleteConfirmation] = useState({ isOpen: false, articleId: null });
     const [formData, setFormData] = useState({ title: '', link: '', website: '' });
+    const fileInputRef = useRef(null);
 
     useEffect(() => {
         if (dbUserId) fetchArticles();
@@ -99,6 +100,67 @@ const Articles = () => {
         setEditingArticle(article);
         setFormData({ title: article.title, link: article.link, website: article.website });
         setShowForm(true);
+    };
+
+    const handleImportJSON = async (e) => {
+        const file = e.target.files?.[0];
+        if (!file) return;
+
+        try {
+            const fileContent = await file.text();
+            const data = JSON.parse(fileContent);
+
+            // Handle both formats: direct array or nested in articles property
+            const articlesArray = Array.isArray(data) ? data : data.articles || [];
+
+            if (!Array.isArray(articlesArray) || articlesArray.length === 0) {
+                toast.error('Invalid JSON format. Expected array of articles or {articles: [...]}');
+                return;
+            }
+
+            // Validate and prepare articles
+            const validArticles = articlesArray.filter(a => {
+                if (!a.title || !a.link || !a.website) {
+                    console.warn('Skipping article with missing fields:', a);
+                    return false;
+                }
+                return true;
+            });
+
+            if (validArticles.length === 0) {
+                toast.error('No valid articles found in file. Each article needs: title, link, website');
+                return;
+            }
+
+            // Insert articles into database
+            let importedCount = 0;
+            for (const article of validArticles) {
+                try {
+                    const { data: newArticle, error } = await TaskService.createArticle({
+                        owner_id: dbUserId,
+                        title: article.title,
+                        link: article.link,
+                        website: article.website,
+                    });
+                    if (!error && newArticle) {
+                        importedCount++;
+                    }
+                } catch (err) {
+                    console.error('Error importing article:', err);
+                }
+            }
+
+            // Refresh articles list
+            await fetchArticles();
+            toast.success(`✅ Imported ${importedCount} articles successfully!`);
+
+            // Reset file input
+            if (fileInputRef.current) {
+                fileInputRef.current.value = '';
+            }
+        } catch (err) {
+            toast.error('Failed to parse JSON file. Make sure it\'s valid JSON.');
+        }
     };
 
     const handleExport = (format) => {
@@ -236,6 +298,24 @@ const Articles = () => {
                 </div>
 
                 <div className="flex items-center gap-4 flex-wrap">
+                    <motion.button
+                        whileHover={{ scale: 1.05 }}
+                        whileTap={{ scale: 0.95 }}
+                        onClick={() => fileInputRef.current?.click()}
+                        className="px-6 py-3 bg-gradient-to-r from-purple-600 to-purple-700 hover:from-purple-500 hover:to-purple-600 text-white font-bold rounded-2xl shadow-lg shadow-purple-600/40 transition-all flex items-center gap-2 border border-purple-500/50"
+                    >
+                        <Upload size={20} />
+                        <span className="text-sm">Import JSON</span>
+                    </motion.button>
+
+                    <input
+                        ref={fileInputRef}
+                        type="file"
+                        accept=".json"
+                        onChange={handleImportJSON}
+                        className="hidden"
+                    />
+
                     <motion.button
                         whileHover={{ scale: 1.05 }}
                         whileTap={{ scale: 0.95 }}

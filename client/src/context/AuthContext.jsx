@@ -129,11 +129,108 @@ export const AuthProvider = ({ children }) => {
         }
     };
 
+    const changePassword = async (oldPassword, newPassword) => {
+        try {
+            if (!dbUserId) throw new Error('User identification failed');
+
+            // Verify old password
+            const { data: userData, error: verifyError } = await supabase
+                .from('users')
+                .select('password_hash')
+                .eq('id', dbUserId)
+                .maybeSingle();
+
+            if (verifyError) throw verifyError;
+            if (!userData || userData.password_hash !== oldPassword) {
+                return { error: { message: 'Current password is incorrect.' } };
+            }
+
+            // Update password
+            const { error: updateError } = await supabase
+                .from('users')
+                .update({ password_hash: newPassword })
+                .eq('id', dbUserId);
+
+            if (updateError) throw updateError;
+            return { data: { success: true }, error: null };
+        } catch (err) {
+            console.error("Password change error:", err);
+            return { data: null, error: err };
+        }
+    };
+
+    const scheduleAccountDeletion = async () => {
+        try {
+            if (!dbUserId) throw new Error('User identification failed');
+
+            const deletionScheduledAt = new Date().toISOString();
+            const { error } = await supabase
+                .from('users')
+                .update({ deletion_scheduled_at: deletionScheduledAt })
+                .eq('id', dbUserId);
+
+            if (error) throw error;
+            return { data: { success: true, scheduledAt: deletionScheduledAt }, error: null };
+        } catch (err) {
+            console.error("Schedule deletion error:", err);
+            return { data: null, error: err };
+        }
+    };
+
+    const cancelAccountDeletion = async () => {
+        try {
+            if (!dbUserId) throw new Error('User identification failed');
+
+            const { error } = await supabase
+                .from('users')
+                .update({ deletion_scheduled_at: null })
+                .eq('id', dbUserId);
+
+            if (error) throw error;
+            return { data: { success: true }, error: null };
+        } catch (err) {
+            console.error("Cancel deletion error:", err);
+            return { data: null, error: err };
+        }
+    };
+
+    const resetPassword = async (email, newPassword) => {
+        try {
+            // Find user by email
+            const { data: userData, error: findError } = await supabase
+                .from('users')
+                .select('id')
+                .eq('email', email)
+                .maybeSingle();
+
+            if (findError) throw findError;
+            if (!userData) {
+                return { error: { message: 'Email not found in our system.' } };
+            }
+
+            // Update password
+            const { error: updateError } = await supabase
+                .from('users')
+                .update({ password_hash: newPassword })
+                .eq('email', email);
+
+            if (updateError) throw updateError;
+            return { data: { success: true }, error: null };
+        } catch (err) {
+            console.error("Password reset error:", err);
+            return { data: null, error: err };
+        }
+    };
+
     const value = {
         signUp: register,
         signIn: login,
         signOut: logout,
         updateUserMetadata,
+        changePassword,
+        scheduleAccountDeletion,
+        cancelAccountDeletion,
+        resetPassword,
         user,
         dbUserId,
         role,
