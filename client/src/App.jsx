@@ -1,6 +1,7 @@
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { Toaster } from 'react-hot-toast';
 import { AuthProvider, useAuth } from './context/AuthContext';
+import { SearchProvider } from './context/SearchContext';
 import Login from './pages/Login';
 import Register from './pages/Register';
 import Dashboard from './pages/Dashboard';
@@ -32,65 +33,67 @@ const ProtectedRoute = ({ children }) => {
 function App() {
     return (
         <AuthProvider>
-            <Router>
-                <div className="min-h-screen bg-slate-900 text-slate-100 selection:bg-primary-500/30 font-sans antialiased">
-                    <Routes>
-                        <Route path="/login" element={<Login />} />
-                        <Route path="/register" element={<Register />} />
-                        <Route path="/dashboard" element={
-                            <ProtectedRoute>
-                                <Layout>
-                                    <Dashboard />
-                                </Layout>
-                            </ProtectedRoute>
-                        } />
-                        <Route path="/tasks" element={
-                            <ProtectedRoute>
-                                <Layout>
-                                    <MyTasks />
-                                </Layout>
-                            </ProtectedRoute>
-                        } />
-                        <Route path="/analytics" element={
-                            <ProtectedRoute>
-                                <Layout>
-                                    <Analytics />
-                                </Layout>
-                            </ProtectedRoute>
-                        } />
-                        <Route path="/schedule" element={
-                            <ProtectedRoute>
-                                <Layout>
-                                    <Schedule />
-                                </Layout>
-                            </ProtectedRoute>
-                        } />
-                        <Route path="/account" element={
-                            <ProtectedRoute>
-                                <Layout>
-                                    <Account />
-                                </Layout>
-                            </ProtectedRoute>
-                        } />
-                        <Route path="/" element={<Navigate to="/dashboard" />} />
-                    </Routes>
+            <SearchProvider>
+                <Router>
+                    <div className="h-screen bg-slate-900 text-slate-100 selection:bg-primary-500/30 font-sans antialiased flex flex-col">
+                        <Routes>
+                            <Route path="/login" element={<Login />} />
+                            <Route path="/register" element={<Register />} />
+                            <Route path="/dashboard" element={
+                                <ProtectedRoute>
+                                    <Layout>
+                                        <Dashboard />
+                                    </Layout>
+                                </ProtectedRoute>
+                            } />
+                            <Route path="/tasks" element={
+                                <ProtectedRoute>
+                                    <Layout>
+                                        <MyTasks />
+                                    </Layout>
+                                </ProtectedRoute>
+                            } />
+                            <Route path="/analytics" element={
+                                <ProtectedRoute>
+                                    <Layout>
+                                        <Analytics />
+                                    </Layout>
+                                </ProtectedRoute>
+                            } />
+                            <Route path="/schedule" element={
+                                <ProtectedRoute>
+                                    <Layout>
+                                        <Schedule />
+                                    </Layout>
+                                </ProtectedRoute>
+                            } />
+                            <Route path="/account" element={
+                                <ProtectedRoute>
+                                    <Layout>
+                                        <Account />
+                                    </Layout>
+                                </ProtectedRoute>
+                            } />
+                            <Route path="/" element={<Navigate to="/dashboard" />} />
+                        </Routes>
 
-                    <Toaster
-                        position="bottom-right"
-                        toastOptions={{
-                            duration: 4000,
-                            className: 'glass border-white/5',
-                            style: {
-                                background: 'rgba(30, 41, 59, 0.95)',
-                                color: '#f1f5f9',
-                                backdropFilter: 'blur(10px)',
-                                borderRadius: '16px',
-                                padding: '12px 20px',
-                            },
-                        }}
-                    />
-                </div>
-            </Router>
+                        <Toaster
+                            position="bottom-right"
+                            toastOptions={{
+                                duration: 4000,
+                                className: 'glass border-white/5',
+                                style: {
+                                    background: 'rgba(30, 41, 59, 0.95)',
+                                    color: '#f1f5f9',
+                                    backdropFilter: 'blur(10px)',
+                                    borderRadius: '16px',
+                                    padding: '12px 20px',
+                                },
+                            }}
+                        />
+                    </div>
+                </Router>
+            </SearchProvider>
         </AuthProvider>
     );
 }

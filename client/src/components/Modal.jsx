@@ -18,7 +18,7 @@ const Modal = ({ isOpen, onClose, title, children }) => {
                         animate={{ opacity: 1, scale: 1, y: 0, rotateX: 0 }}
                         exit={{ opacity: 0, scale: 0.85, y: 40, rotateX: -10 }}
                         transition={{ type: "spring", damping: 25, stiffness: 300 }}
-                        className="relative w-full max-w-2xl glass-panel p-8 sm:p-12 rounded-[50px] shadow-[0_40px_100px_-20px_rgba(0,0,0,0.6)] border-white/[0.05] overflow-hidden"
+                        className="relative w-full max-w-4xl glass-panel p-8 sm:p-12 rounded-[50px] shadow-[0_40px_100px_-20px_rgba(0,0,0,0.6)] border-white/[0.05] overflow-hidden"
                     >
                         {/* Background Glow */}
                         <div className="absolute top-0 right-0 w-32 h-32 bg-blue-500/10 rounded-full blur-[60px]"></div>

@@ -11,6 +11,7 @@ import { useAuth } from '../context/AuthContext';
 import { TaskService } from '../services/taskService';
 import Modal from '../components/Modal';
 import TaskForm from '../components/TaskForm';
+import ConfirmationModal from '../components/ConfirmationModal';
 import toast from 'react-hot-toast';
 
 const Dashboard = () => {
@@ -20,6 +21,7 @@ const Dashboard = () => {
     const [isTaskModalOpen, setIsTaskModalOpen] = useState(false);
     const [editingTask, setEditingTask] = useState(null);
     const [loading, setLoading] = useState(true);
+    const [deleteConfirmation, setDeleteConfirmation] = useState({ isOpen: false, taskId: null });
 
     useEffect(() => {
         if (dbUserId) fetchData();
@@ -55,11 +57,18 @@ const Dashboard = () => {
         }
     };
 
-    const handleDeleteTask = async (id) => {
+    const handleDeleteClick = (id) => {
+        setDeleteConfirmation({ isOpen: true, taskId: id });
+    };
+
+    const handleConfirmDelete = async () => {
+        const { taskId } = deleteConfirmation;
+        setDeleteConfirmation({ isOpen: false, taskId: null });
+
         try {
-            const { error } = await TaskService.deleteTask(id);
+            const { error } = await TaskService.deleteTask(taskId);
             if (!error) {
-                setTasks(prev => prev.filter(t => t.id !== id));
+                setTasks(prev => prev.filter(t => t.id !== taskId));
                 toast.success('Task removed');
             }
         } catch (error) {
@@ -159,7 +168,7 @@ const Dashboard = () => {
                                     task={task}
                                     index={idx}
                                     onToggle={() => handleToggleTask(task.id, task.completed)}
-                                    onDelete={() => handleDeleteTask(task.id)}
+                                    onDelete={() => handleDeleteClick(task.id)}
                                     onEdit={() => handleEditTask(task)}
                                 />
                             ))
@@ -234,6 +243,15 @@ const Dashboard = () => {
                     }}
                 />
             </Modal>
+
+            <ConfirmationModal
+                isOpen={deleteConfirmation.isOpen}
+                title="Delete Task"
+                message="Are you sure you want to delete this task? This action cannot be undone."
+                onConfirm={handleConfirmDelete}
+                onCancel={() => setDeleteConfirmation({ isOpen: false, taskId: null })}
+                isDangerous={true}
+            />
         </div>
     );
 };

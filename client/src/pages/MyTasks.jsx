@@ -5,19 +5,29 @@ import {
     Loader2, Trash2, CheckCircle2, Clock, Globe, Layout, Edit2
 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
+import { useSearch } from '../context/SearchContext';
 import { TaskService } from '../services/taskService';
 import Modal from '../components/Modal';
 import TaskForm from '../components/TaskForm';
+import ConfirmationModal from '../components/ConfirmationModal';
 import toast from 'react-hot-toast';
 
 const MyTasks = () => {
     const { user, dbUserId, role } = useAuth();
+    const { globalSearchQuery, setGlobalSearchQuery } = useSearch();
     const [tasks, setTasks] = useState([]);
     const [categories, setCategories] = useState([]);
     const [loading, setLoading] = useState(true);
     const [searchTerm, setSearchTerm] = useState('');
     const [isTaskModalOpen, setIsTaskModalOpen] = useState(false);
     const [editingTask, setEditingTask] = useState(null);
+    const [deleteConfirmation, setDeleteConfirmation] = useState({ isOpen: false, taskId: null });
+
+    useEffect(() => {
+        if (globalSearchQuery) {
+            setSearchTerm(globalSearchQuery);
+        }
+    }, [globalSearchQuery]);
 
     useEffect(() => {
         if (dbUserId) fetchData();
@@ -51,11 +61,18 @@ const MyTasks = () => {
         }
     };
 
-    const handleDeleteTask = async (id) => {
+    const handleDeleteClick = (id) => {
+        setDeleteConfirmation({ isOpen: true, taskId: id });
+    };
+
+    const handleConfirmDelete = async () => {
+        const { taskId } = deleteConfirmation;
+        setDeleteConfirmation({ isOpen: false, taskId: null });
+
         try {
-            const { error } = await TaskService.deleteTask(id);
+            const { error } = await TaskService.deleteTask(taskId);
             if (!error) {
-                setTasks(prev => prev.filter(t => t.id !== id));
+                setTasks(prev => prev.filter(t => t.id !== taskId));
                 toast.success('Record purged');
             }
         } catch (error) {
@@ -69,8 +86,7 @@ const MyTasks = () => {
     };
 
     const filteredTasks = tasks.filter(t =>
-        t.title?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        t.categories?.name?.toLowerCase().includes(searchTerm.toLowerCase())
+        t.title?.toLowerCase().includes(searchTerm.toLowerCase())
     );
 
     return (
@@ -93,7 +109,11 @@ const MyTasks = () => {
                         <input
                             placeholder="Search records..."
                             value={searchTerm}
-                            onChange={(e) => setSearchTerm(e.target.value)}
+                            onChange={(e) => {
+                                const query = e.target.value;
+                                setSearchTerm(query);
+                                setGlobalSearchQuery(query);
+                            }}
                             className="w-full bg-slate-900/50 border border-white/5 rounded-2xl py-3 pl-12 pr-6 focus:ring-2 focus:ring-blue-500/50 outline-none transition-all font-bold text-sm text-white"
                         />
                     </div>
@@ -139,7 +159,7 @@ const MyTasks = () => {
                                         task={task}
                                         index={idx}
                                         onToggle={() => handleToggleTask(task.id, task.completed)}
-                                        onDelete={() => handleDeleteTask(task.id)}
+                                        onDelete={() => handleDeleteClick(task.id)}
                                         onEdit={() => handleEditTask(task)}
                                     />
                                 ))
@@ -174,6 +194,15 @@ const MyTasks = () => {
                     }}
                 />
             </Modal>
+
+            <ConfirmationModal
+                isOpen={deleteConfirmation.isOpen}
+                title="Delete Task"
+                message="Are you sure you want to delete this task? This action cannot be undone."
+                onConfirm={handleConfirmDelete}
+                onCancel={() => setDeleteConfirmation({ isOpen: false, taskId: null })}
+                isDangerous={true}
+            />
         </main>
     );
 };

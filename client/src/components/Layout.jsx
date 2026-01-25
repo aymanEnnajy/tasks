@@ -1,5 +1,5 @@
-import { useState } from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import { useState, useEffect } from 'react';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
     LayoutDashboard, CheckSquare, BarChart3,
@@ -7,11 +7,44 @@ import {
     Search, Download, Bell, User
 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
+import { useSearch } from '../context/SearchContext';
+import { TaskService } from '../services/taskService';
+import NotificationPanel from './NotificationPanel';
 
 const Layout = ({ children }) => {
-    const { user, signOut, role } = useAuth();
+    const { user, signOut, role, dbUserId } = useAuth();
+    const { globalSearchQuery, setGlobalSearchQuery } = useSearch();
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+    const [isNotificationOpen, setIsNotificationOpen] = useState(false);
+    const [tasks, setTasks] = useState([]);
     const location = useLocation();
+    const navigate = useNavigate();
+
+    useEffect(() => {
+        const fetchTasks = async () => {
+            if (dbUserId) {
+                try {
+                    const { data } = await TaskService.getTasks(dbUserId, role);
+                    if (data) setTasks(data);
+                } catch (err) {
+                    console.error('Failed to fetch tasks for notifications');
+                }
+            }
+        };
+        
+        fetchTasks();
+        // Refresh every 30 seconds
+        const interval = setInterval(fetchTasks, 30000);
+        return () => clearInterval(interval);
+    }, [dbUserId, role]);
+
+    const handleSearchChange = (e) => {
+        const query = e.target.value;
+        setGlobalSearchQuery(query);
+        if (location.pathname !== '/tasks' && query.trim()) {
+            navigate('/tasks');
+        }
+    };
 
     const userName = user?.user_metadata?.username || user?.email?.split('@')[0] || 'User';
 
@@ -24,7 +57,7 @@ const Layout = ({ children }) => {
     ];
 
     return (
-        <div className="flex min-h-screen bg-[#020617] text-slate-200 selection:bg-blue-500/30 font-sans">
+        <div className="flex h-screen bg-[#020617] text-slate-200 selection:bg-blue-500/30 font-sans overflow-hidden">
             {/* Mobile Navbar Overlay */}
             <AnimatePresence>
                 {isMobileMenuOpen && (
@@ -119,6 +152,8 @@ const Layout = ({ children }) => {
                             <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-500 group-focus-within:text-blue-500 transition-colors" size={20} />
                             <input
                                 placeholder="Search live database..."
+                                value={globalSearchQuery}
+                                onChange={handleSearchChange}
                                 className="w-full bg-slate-900/50 border border-white/5 rounded-2xl py-3 pl-12 pr-6 focus:ring-2 focus:ring-blue-500/50 focus:bg-slate-900 focus:border-blue-500 outline-none transition-all font-medium text-sm text-white"
                             />
                         </div>
@@ -129,14 +164,25 @@ const Layout = ({ children }) => {
                             <Download size={16} className="text-blue-500" /> Export Data
                         </button>
                         <div className="w-[1px] h-6 bg-white/10 mx-2 hidden sm:block"></div>
-                        <button className="p-3.5 glass-card rounded-2xl relative text-white">
+                        <button 
+                            onClick={() => setIsNotificationOpen(!isNotificationOpen)}
+                            className="p-3.5 glass-card rounded-2xl relative text-white hover:bg-white/[0.08] transition-colors"
+                        >
                             <Bell size={20} />
-                            <span className="absolute top-4 right-4 w-2 h-2 bg-rose-500 rounded-full shadow-[0_0_8px_#f43f5e]"></span>
+                            {tasks.some(t => t.end_day && !t.completed) && (
+                                <span className="absolute top-4 right-4 w-2 h-2 bg-rose-500 rounded-full shadow-[0_0_8px_#f43f5e] animate-pulse"></span>
+                            )}
                         </button>
                     </div>
                 </header>
 
                 {children}
+                
+                <NotificationPanel 
+                    isOpen={isNotificationOpen} 
+                    onClose={() => setIsNotificationOpen(false)}
+                    tasks={tasks}
+                />
             </div>
         </div>
     );

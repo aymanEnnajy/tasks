@@ -158,7 +158,8 @@ const TaskForm = ({ onSuccess, categories: initialCategories, task = null }) => 
                 category_id: formData.category_id ? parseInt(formData.category_id) : null,
                 sub_category_id: formData.sub_category_id ? parseInt(formData.sub_category_id) : null,
                 site_id: formData.site_id ? parseInt(formData.site_id) : null,
-                end_day: formData.end_day || null // Convert empty string to null for date column
+                // Only include end_day if it has a value, and format it as a date (YYYY-MM-DD)
+                end_day: formData.end_day && formData.end_day.trim() ? formData.end_day : null
             };
 
             const { error } = task
@@ -166,7 +167,12 @@ const TaskForm = ({ onSuccess, categories: initialCategories, task = null }) => 
                 : await TaskService.createTask(submissionData);
 
             if (error) {
-                toast.error(error.message);
+                console.error('API Error:', error);
+                if (error.message && error.message.includes('invalid input syntax')) {
+                    toast.error('Please enter a valid deadline date');
+                } else {
+                    toast.error(error.message);
+                }
             } else {
                 toast.success(task ? 'Insight refactored!' : 'Insight recorded successfully!');
                 onSuccess();
@@ -353,6 +359,16 @@ const TaskForm = ({ onSuccess, categories: initialCategories, task = null }) => 
                         <div className="absolute right-5 top-1/2 -translate-y-1/2 pointer-events-none opacity-40 text-white">▼</div>
                     </div>
                 )}
+            </div>
+
+            <div className="space-y-3">
+                <label className="text-[11px] font-black text-slate-500 uppercase tracking-[3px] ml-1">Deadline <span className="text-slate-800">(Optional)</span></label>
+                <input
+                    type="date"
+                    value={formData.end_day || ''}
+                    onChange={(e) => setFormData({ ...formData, end_day: e.target.value })}
+                    className="w-full bg-slate-950/50 border border-white/5 rounded-[24px] py-5 px-6 focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500 focus:bg-slate-950 outline-none transition-all text-white font-bold"
+                />
             </div>
 
             <button
