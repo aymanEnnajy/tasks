@@ -2,6 +2,7 @@ import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-d
 import { Toaster } from 'react-hot-toast';
 import { AuthProvider, useAuth } from './context/AuthContext';
 import { SearchProvider } from './context/SearchContext';
+import { TaskHoverProvider } from './context/TaskHoverContext';
 import Login from './pages/Login';
 import Register from './pages/Register';
 import Dashboard from './pages/Dashboard';
@@ -9,6 +10,7 @@ import MyTasks from './pages/MyTasks';
 import Analytics from './pages/Analytics';
 import Schedule from './pages/Schedule';
 import Account from './pages/Account';
+import Articles from './pages/Articles';
 import Layout from './components/Layout';
 
 // Protected Route Component
@@ -34,9 +36,10 @@ function App() {
     return (
         <AuthProvider>
             <SearchProvider>
-                <Router>
-                    <div className="h-screen bg-slate-900 text-slate-100 selection:bg-primary-500/30 font-sans antialiased flex flex-col">
-                        <Routes>
+                <TaskHoverProvider>
+                    <Router>
+                        <div className="h-screen bg-slate-900 text-slate-100 selection:bg-primary-500/30 font-sans antialiased flex flex-col">
+                            <Routes>
                             <Route path="/login" element={<Login />} />
                             <Route path="/register" element={<Register />} />
                             <Route path="/dashboard" element={
@@ -74,6 +77,13 @@ function App() {
                                     </Layout>
                                 </ProtectedRoute>
                             } />
+                            <Route path="/articles" element={
+                                <ProtectedRoute>
+                                    <Layout>
+                                        <Articles />
+                                    </Layout>
+                                </ProtectedRoute>
+                            } />
                             <Route path="/" element={<Navigate to="/dashboard" />} />
                         </Routes>
 
@@ -93,6 +103,7 @@ function App() {
                         />
                     </div>
                 </Router>
+                </TaskHoverProvider>
             </SearchProvider>
         </AuthProvider>
     );

@@ -60,5 +60,25 @@ export const TaskService = {
 
     deleteTask: async (id) => {
         return await supabase.from('tasks').delete().eq('id', id);
+    },
+
+    // Articles
+    getArticles: async (userId) => {
+        return await supabase.from('articles')
+            .select('*')
+            .eq('owner_id', userId)
+            .order('created_at', { ascending: false });
+    },
+
+    createArticle: async (articleData) => {
+        return await supabase.from('articles').insert(articleData).select().single();
+    },
+
+    updateArticle: async (id, articleData) => {
+        return await supabase.from('articles').update(articleData).eq('id', id).select().single();
+    },
+
+    deleteArticle: async (id) => {
+        return await supabase.from('articles').delete().eq('id', id);
     }
 };

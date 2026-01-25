@@ -40,7 +40,7 @@ const NotificationPanel = ({ isOpen, onClose, tasks = [] }) => {
                         initial={{ opacity: 0, y: -20, x: 20 }}
                         animate={{ opacity: 1, y: 0, x: 0 }}
                         exit={{ opacity: 0, y: -20, x: 20 }}
-                        className="absolute top-24 right-6 z-50 w-96 glass-panel rounded-3xl border border-white/10 shadow-2xl overflow-hidden"
+                        className="fixed top-20 right-4 left-4 lg:absolute lg:top-24 lg:right-6 lg:left-auto z-50 w-auto lg:w-96 glass-panel rounded-3xl border border-white/10 shadow-2xl overflow-hidden max-h-[70vh] flex flex-col"
                     >
                         {/* Header */}
                         <div className="bg-gradient-to-r from-rose-600/20 to-amber-600/20 border-b border-white/10 p-4 flex items-center justify-between">
@@ -57,7 +57,7 @@ const NotificationPanel = ({ isOpen, onClose, tasks = [] }) => {
                         </div>
 
                         {/* Content */}
-                        <div className="custom-scrollbar max-h-[500px] overflow-y-auto">
+                        <div className="custom-scrollbar max-h-[calc(70vh-120px)] overflow-y-auto flex-1">
                             {upcomingTasks.length > 0 ? (
                                 upcomingTasks.map((task, idx) => {
                                     const overdue = isOverdue(task.end_day);

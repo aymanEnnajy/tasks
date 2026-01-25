@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import {
     Calendar as CalendarIcon, ChevronLeft, ChevronRight,
@@ -6,10 +7,13 @@ import {
 } from 'lucide-react';
 import { format, startOfMonth, endOfMonth, startOfWeek, endOfWeek, eachDayOfInterval, isSameMonth, isSameDay, addMonths, subMonths } from 'date-fns';
 import { useAuth } from '../context/AuthContext';
+import { useTaskHover } from '../context/TaskHoverContext';
 import { TaskService } from '../services/taskService';
 
 const Schedule = () => {
     const { user, dbUserId, role } = useAuth();
+    const { setHoveredTaskId } = useTaskHover();
+    const navigate = useNavigate();
     const [currentDate, setCurrentDate] = useState(new Date());
     const [tasks, setTasks] = useState([]);
 
@@ -88,9 +92,28 @@ const Schedule = () => {
                                 </div>
                                 <div className="space-y-2">
                                     {dayTasks.slice(0, 3).map(task => (
-                                        <div key={task.id} className="text-[9px] font-black text-white bg-slate-800/50 p-2 rounded-lg truncate border border-white/5">
+                                        <motion.div 
+                                            key={task.id} 
+                                            whileHover={{ scale: 1.05 }}
+                                            whileTap={{ scale: 0.98 }}
+                                            onClick={() => {
+                                                setHoveredTaskId(task.id);
+                                                navigate('/tasks');
+                                                // Scroll to task after navigation
+                                                setTimeout(() => {
+                                                    const element = document.getElementById(`task-${task.id}`);
+                                                    if (element) {
+                                                        element.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                                                        element.classList.add('highlight-task');
+                                                        setTimeout(() => element.classList.remove('highlight-task'), 2000);
+                                                    }
+                                                }, 100);
+                                            }}
+                                            className="text-[9px] font-black text-white bg-slate-800/50 p-2 rounded-lg truncate border border-white/5 hover:border-blue-500 hover:bg-blue-500/20 cursor-pointer transition-all"
+                                            title={task.title}
+                                        >
                                             {task.title}
-                                        </div>
+                                        </motion.div>
                                     ))}
                                 </div>
                             </div>

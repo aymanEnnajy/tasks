@@ -5,7 +5,7 @@ import {
     LayoutDashboard, LogOut, Plus, Settings,
     Briefcase, GraduationCap, Trophy, Apple,
     Search, Bell, Download, Filter, Menu, X,
-    TrendingUp, Users, Target, Rocket, Trash2, CheckCircle2, Loader2, Edit2
+    TrendingUp, Users, Target, Rocket, Trash2, CheckCircle2, Loader2, Edit2, ChevronLeft, ChevronRight
 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { TaskService } from '../services/taskService';
@@ -13,6 +13,9 @@ import Modal from '../components/Modal';
 import TaskForm from '../components/TaskForm';
 import ConfirmationModal from '../components/ConfirmationModal';
 import toast from 'react-hot-toast';
+
+// ⚠️ CHANGE THIS NUMBER TO 10 FOR PRODUCTION (Currently 2 for testing)
+const TASKS_PER_PAGE = 10;
 
 const Dashboard = () => {
     const { user, dbUserId, role } = useAuth();
@@ -22,6 +25,9 @@ const Dashboard = () => {
     const [editingTask, setEditingTask] = useState(null);
     const [loading, setLoading] = useState(true);
     const [deleteConfirmation, setDeleteConfirmation] = useState({ isOpen: false, taskId: null });
+    const [currentPage, setCurrentPage] = useState(1);
+    const [showFilters, setShowFilters] = useState(false);
+    const [filters, setFilters] = useState({ status: 'all', category: 'all', hasDeadline: 'all' });
 
     useEffect(() => {
         if (dbUserId) fetchData();
@@ -83,9 +89,34 @@ const Dashboard = () => {
 
     const IconMap = { Briefcase, GraduationCap, Trophy, Apple };
 
-    const completedTasks = tasks.filter(t => t.completed).length;
-    const pendingTasks = tasks.length - completedTasks;
-    const completionRate = tasks.length > 0 ? Math.round((completedTasks / tasks.length) * 100) : 0;
+    // Apply filters
+    const filteredTasks = tasks.filter(t => {
+        // Status filter
+        const matchesStatus = filters.status === 'all' || 
+            (filters.status === 'completed' && t.completed) ||
+            (filters.status === 'pending' && !t.completed);
+        
+        // Category filter
+        const matchesCategory = filters.category === 'all' || t.category_id === parseInt(filters.category);
+        
+        // Deadline filter
+        const matchesDeadline = filters.hasDeadline === 'all' ||
+            (filters.hasDeadline === 'hasDeadline' && t.end_day) ||
+            (filters.hasDeadline === 'noDeadline' && !t.end_day);
+        
+        return matchesStatus && matchesCategory && matchesDeadline;
+    });
+
+    const completedTasks = filteredTasks.filter(t => t.completed).length;
+    const pendingTasks = filteredTasks.length - completedTasks;
+    const completionRate = filteredTasks.length > 0 ? Math.round((completedTasks / filteredTasks.length) * 100) : 0;
+
+    // Pagination logic
+    const totalPages = Math.ceil(filteredTasks.length / TASKS_PER_PAGE);
+    const paginatedTasks = filteredTasks.slice(
+        (currentPage - 1) * TASKS_PER_PAGE,
+        currentPage * TASKS_PER_PAGE
+    );
 
     return (
         <div className="flex-1 overflow-y-auto p-6 lg:p-10 space-y-10 custom-scrollbar pb-32">
@@ -137,6 +168,111 @@ const Dashboard = () => {
                 </div>
             </section>
 
+            {/* Filter Panel */}
+            <motion.div
+                initial={{ opacity: 0, height: 0 }}
+                animate={{ opacity: showFilters ? 1 : 0, height: showFilters ? 'auto' : 0 }}
+                exit={{ opacity: 0, height: 0 }}
+                className={`overflow-hidden ${showFilters ? 'block' : 'hidden'}`}
+            >
+                <div className="glass-panel rounded-[40px] border-white/5 p-8">
+                    <h3 className="text-xl font-bold text-white mb-6">Filters</h3>
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                        {/* Status Filter */}
+                        <div>
+                            <label className="text-sm font-bold text-slate-400 uppercase tracking-wider block mb-3">Status</label>
+                            <select
+                                value={filters.status}
+                                onChange={(e) => {
+                                    setFilters({ ...filters, status: e.target.value });
+                                    setCurrentPage(1);
+                                }}
+                                className="w-full bg-slate-800/50 border border-white/10 rounded-xl py-2 px-4 text-white font-bold text-sm focus:ring-2 focus:ring-blue-500/50 outline-none"
+                            >
+                                <option value="all">All Tasks</option>
+                                <option value="pending">Pending</option>
+                                <option value="completed">Completed</option>
+                            </select>
+                        </div>
+
+                        {/* Category Filter */}
+                        <div>
+                            <label className="text-sm font-bold text-slate-400 uppercase tracking-wider block mb-3">Category</label>
+                            <select
+                                value={filters.category}
+                                onChange={(e) => {
+                                    setFilters({ ...filters, category: e.target.value });
+                                    setCurrentPage(1);
+                                }}
+                                className="w-full bg-slate-800/50 border border-white/10 rounded-xl py-2 px-4 text-white font-bold text-sm focus:ring-2 focus:ring-blue-500/50 outline-none"
+                            >
+                                <option value="all">All Categories</option>
+                                {categories.map(cat => (
+                                    <option key={cat.id} value={cat.id}>{cat.name}</option>
+                                ))}
+                            </select>
+                        </div>
+
+                        {/* Deadline Filter */}
+                        <div>
+                            <label className="text-sm font-bold text-slate-400 uppercase tracking-wider block mb-3">Deadline</label>
+                            <select
+                                value={filters.hasDeadline}
+                                onChange={(e) => {
+                                    setFilters({ ...filters, hasDeadline: e.target.value });
+                                    setCurrentPage(1);
+                                }}
+                                className="w-full bg-slate-800/50 border border-white/10 rounded-xl py-2 px-4 text-white font-bold text-sm focus:ring-2 focus:ring-blue-500/50 outline-none"
+                            >
+                                <option value="all">All Tasks</option>
+                                <option value="hasDeadline">Has Deadline</option>
+                                <option value="noDeadline">No Deadline</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    {/* Reset Filters Button */}
+                    <div className="mt-6 flex gap-4">
+                        <motion.button
+                            whileHover={{ scale: 1.02 }}
+                            whileTap={{ scale: 0.98 }}
+                            onClick={() => {
+                                setFilters({ status: 'all', category: 'all', hasDeadline: 'all' });
+                                setCurrentPage(1);
+                            }}
+                            className="px-6 py-2 bg-slate-700 hover:bg-slate-600 text-white font-bold rounded-xl transition-colors"
+                        >
+                            Reset Filters
+                        </motion.button>
+                    </div>
+                </div>
+            </motion.div>
+
+            {/* Filter Toggle Button */}
+            <div className="flex gap-4 items-center">
+                <motion.button
+                    whileHover={{ scale: 1.02 }}
+                    whileTap={{ scale: 0.98 }}
+                    onClick={() => setShowFilters(!showFilters)}
+                    className={`px-6 py-3 font-bold rounded-2xl transition-all flex items-center gap-2 border ${
+                        showFilters
+                            ? 'bg-blue-600 text-white border-blue-500/50'
+                            : 'bg-slate-800/50 text-slate-400 border-white/10 hover:text-white'
+                    }`}
+                >
+                    <Filter size={20} />
+                    <span className="text-sm">Filters</span>
+                    {Object.values(filters).some(f => f !== 'all') && (
+                        <span className="ml-2 px-2 py-1 bg-blue-500 text-white text-xs font-bold rounded">
+                            {Object.values(filters).filter(f => f !== 'all').length}
+                        </span>
+                    )}
+                </motion.button>
+                <p className="text-slate-500 text-sm font-bold">
+                    Showing {filteredTasks.length} of {tasks.length} tasks
+                </p>
+            </div>
+
             {/* Task List Section */}
             <section className="grid grid-cols-1 xl:grid-cols-3 gap-10">
                 <div className="xl:col-span-2 space-y-8">
@@ -144,7 +280,7 @@ const Dashboard = () => {
                         <h3 className="text-2xl font-black text-white italic tracking-tight uppercase">Database Flow</h3>
                         <div className="flex items-center gap-3">
                             <span className="text-[10px] font-black text-slate-600 uppercase tracking-widest">
-                                Synced: <span className="text-blue-500">{tasks.length}</span>
+                                Synced: <span className="text-blue-500">{filteredTasks.length}</span>
                             </span>
                             <button
                                 onClick={() => setIsTaskModalOpen(true)}
@@ -162,16 +298,59 @@ const Dashboard = () => {
                                 <p className="font-black uppercase tracking-[6px] text-[10px] text-slate-600">Accessing Cloud</p>
                             </div>
                         ) : tasks.length > 0 ? (
-                            tasks.map((task, idx) => (
-                                <TaskRow
-                                    key={task.id}
-                                    task={task}
-                                    index={idx}
-                                    onToggle={() => handleToggleTask(task.id, task.completed)}
-                                    onDelete={() => handleDeleteClick(task.id)}
-                                    onEdit={() => handleEditTask(task)}
-                                />
-                            ))
+                            <>
+                                <div className="space-y-4">
+                                    {paginatedTasks.map((task, idx) => (
+                                        <TaskRow
+                                            key={task.id}
+                                            task={task}
+                                            index={idx}
+                                            onToggle={() => handleToggleTask(task.id, task.completed)}
+                                            onDelete={() => handleDeleteClick(task.id)}
+                                            onEdit={() => handleEditTask(task)}
+                                        />
+                                    ))}
+                                </div>
+
+                                {totalPages > 1 && (
+                                    <div className="flex items-center justify-between p-6 bg-white/[0.02] rounded-2xl border border-white/5">
+                                        <div className="text-[10px] font-black text-slate-400 uppercase tracking-widest">
+                                            Page {currentPage} of {totalPages} • Showing {paginatedTasks.length} of {filteredTasks.length} tasks
+                                        </div>
+                                        <div className="flex items-center gap-2">
+                                            <button
+                                                onClick={() => setCurrentPage(prev => Math.max(1, prev - 1))}
+                                                disabled={currentPage === 1}
+                                                className="p-2 glass-card rounded-lg hover:bg-blue-500/10 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
+                                            >
+                                                <ChevronLeft className="text-slate-400" size={18} />
+                                            </button>
+                                            <div className="flex gap-1">
+                                                {Array.from({ length: totalPages }).map((_, i) => (
+                                                    <button
+                                                        key={i + 1}
+                                                        onClick={() => setCurrentPage(i + 1)}
+                                                        className={`w-8 h-8 rounded-lg font-bold text-[10px] transition-all ${
+                                                            currentPage === i + 1
+                                                                ? 'bg-blue-600 text-white'
+                                                                : 'bg-white/5 text-slate-400 hover:bg-white/10'
+                                                        }`}
+                                                    >
+                                                        {i + 1}
+                                                    </button>
+                                                ))}
+                                            </div>
+                                            <button
+                                                onClick={() => setCurrentPage(prev => Math.min(totalPages, prev + 1))}
+                                                disabled={currentPage === totalPages}
+                                                className="p-2 glass-card rounded-lg hover:bg-blue-500/10 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
+                                            >
+                                                <ChevronRight className="text-slate-400" size={18} />
+                                            </button>
+                                        </div>
+                                    </div>
+                                )}
+                            </>
                         ) : (
                             <div className="py-32 text-center border-[3px] border-dashed border-white/[0.03] rounded-[50px] bg-slate-900/10 active:scale-95 transition-all cursor-pointer" onClick={() => setIsTaskModalOpen(true)}>
                                 <div className="w-20 h-20 bg-slate-800 rounded-full flex items-center justify-center mx-auto mb-6 text-slate-600 border border-white/5">

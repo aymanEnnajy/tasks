@@ -27,6 +27,28 @@ const Analytics = () => {
     const pendingTasks = tasks.length - completedTasks;
     const completionRate = tasks.length > 0 ? Math.round((completedTasks / tasks.length) * 100) : 0;
 
+    // Calculate real analytics by category
+    const categoryAnalytics = tasks.reduce((acc, task) => {
+        const categoryName = task.categories?.name || 'Uncategorized';
+        if (!acc[categoryName]) {
+            acc[categoryName] = { total: 0, completed: 0 };
+        }
+        acc[categoryName].total++;
+        if (task.completed) acc[categoryName].completed++;
+        return acc;
+    }, {});
+
+    // Convert to array and calculate percentages, sorted by task count
+    const productivityData = Object.entries(categoryAnalytics)
+        .map(([name, data]) => ({
+            label: name,
+            completedCount: data.completed,
+            totalCount: data.total,
+            percentage: Math.round((data.completed / data.total) * 100)
+        }))
+        .sort((a, b) => b.totalCount - a.totalCount)
+        .slice(0, 5); // Show top 5 categories
+
     return (
         <main className="flex-1 overflow-y-auto p-6 lg:p-10 space-y-10 custom-scrollbar pb-32">
             <header>
@@ -49,29 +71,35 @@ const Analytics = () => {
             <div className="grid grid-cols-1 xl:grid-cols-2 gap-10">
                 <div className="glass-panel p-10 rounded-[50px] border-white/5 bg-gradient-to-br from-blue-600/5 to-transparent">
                     <h3 className="text-xl font-black text-white italic mb-8 uppercase tracking-widest">Productivity Flow</h3>
-                    <div className="space-y-6">
-                        {[
-                            { label: 'Development', value: 85, color: 'bg-blue-500' },
-                            { label: 'System Design', value: 62, color: 'bg-indigo-500' },
-                            { label: 'Optimization', value: 45, color: 'bg-emerald-500' },
-                            { label: 'Documentation', value: 20, color: 'bg-slate-700' },
-                        ].map((item, i) => (
-                            <div key={i} className="space-y-2">
-                                <div className="flex justify-between text-[10px] font-black uppercase tracking-widest">
-                                    <span className="text-slate-500">{item.label}</span>
-                                    <span className="text-white">{item.value}%</span>
+                    {productivityData.length > 0 ? (
+                        <div className="space-y-6">
+                            {productivityData.map((item, i) => (
+                                <div key={i} className="space-y-2">
+                                    <div className="flex justify-between text-[10px] font-black uppercase tracking-widest">
+                                        <span className="text-slate-500">{item.label}</span>
+                                        <span className="text-white">{item.percentage}% ({item.completedCount}/{item.totalCount})</span>
+                                    </div>
+                                    <div className="h-2 w-full bg-slate-900 rounded-full overflow-hidden border border-white/5">
+                                        <motion.div
+                                            initial={{ width: 0 }}
+                                            animate={{ width: `${item.percentage}%` }}
+                                            transition={{ duration: 1, delay: i * 0.1 }}
+                                            className={`h-full bg-gradient-to-r ${
+                                                item.percentage === 100 ? 'from-emerald-500 to-teal-500' :
+                                                item.percentage >= 75 ? 'from-blue-500 to-indigo-500' :
+                                                item.percentage >= 50 ? 'from-amber-500 to-orange-500' :
+                                                'from-rose-500 to-rose-600'
+                                            } shadow-[0_0_10px_rgba(59,130,246,0.3)]`}
+                                        />
+                                    </div>
                                 </div>
-                                <div className="h-2 w-full bg-slate-900 rounded-full overflow-hidden border border-white/5">
-                                    <motion.div
-                                        initial={{ width: 0 }}
-                                        animate={{ width: `${item.value}%` }}
-                                        transition={{ duration: 1, delay: i * 0.1 }}
-                                        className={`h-full ${item.color} shadow-[0_0_10px_rgba(59,130,246,0.3)]`}
-                                    />
-                                </div>
-                            </div>
-                        ))}
-                    </div>
+                            ))}
+                        </div>
+                    ) : (
+                        <div className="text-center py-8">
+                            <p className="text-slate-500 font-bold">No tasks yet. Create some to see analytics!</p>
+                        </div>
+                    )}
                 </div>
             </div>
         </main>
