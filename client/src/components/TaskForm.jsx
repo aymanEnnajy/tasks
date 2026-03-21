@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { TaskService } from '../services/taskService';
 import { useAuth } from '../context/AuthContext';
 import { Plus, Loader2, Globe, List, Layout, CheckCircle2, Type, AlignLeft } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
 import toast from 'react-hot-toast';
 
 const TaskForm = ({ onSuccess, categories: initialCategories, task = null }) => {
@@ -321,29 +322,34 @@ const TaskForm = ({ onSuccess, categories: initialCategories, task = null }) => 
                     </button>
                 </div>
 
-                {showAddSite ? (
-                    <motion.div
-                        initial={{ opacity: 0, y: -10 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        className="flex gap-4"
-                    >
-                        <input
-                            value={newSiteName}
-                            onChange={(e) => setNewSiteName(e.target.value)}
-                            className="flex-1 bg-slate-950 border border-blue-500/50 rounded-[20px] py-4 px-6 focus:ring-4 focus:ring-blue-500/20 outline-none transition-all text-white font-bold"
-                            placeholder="Enterprise Title..."
-                            autoFocus
-                        />
-                        <button
-                            type="button"
-                            onClick={handleAddSite}
-                            disabled={loading}
-                            className="bg-blue-600 px-6 rounded-[20px] font-black text-white hover:bg-blue-500 transition-all uppercase text-[10px] tracking-widest"
+                <AnimatePresence>
+                    {showAddSite && (
+                        <motion.div
+                            key="add-site-form"
+                            initial={{ opacity: 0, height: 0, y: -10 }}
+                            animate={{ opacity: 1, height: 'auto', y: 0 }}
+                            exit={{ opacity: 0, height: 0, y: -10 }}
+                            className="flex gap-4 overflow-hidden"
                         >
-                            {loading ? <Loader2 size={16} className="animate-spin" /> : 'Confirm'}
-                        </button>
-                    </motion.div>
-                ) : (
+                            <input
+                                value={newSiteName}
+                                onChange={(e) => setNewSiteName(e.target.value)}
+                                className="flex-1 bg-slate-950 border border-blue-500/50 rounded-[20px] py-4 px-6 focus:ring-4 focus:ring-blue-500/20 outline-none transition-all text-white font-bold"
+                                placeholder="Enter site name..."
+                                autoFocus
+                            />
+                            <button
+                                type="button"
+                                onClick={handleAddSite}
+                                disabled={loading}
+                                className="bg-blue-600 px-6 rounded-[20px] font-black text-white hover:bg-blue-500 transition-all uppercase text-[10px] tracking-widest"
+                            >
+                                {loading ? <Loader2 size={16} className="animate-spin" /> : 'Confirm'}
+                            </button>
+                        </motion.div>
+                    )}
+                </AnimatePresence>
+                {!showAddSite && (
                     <div className="relative">
                         <Globe className="absolute left-5 top-1/2 -translate-y-1/2 text-slate-600" size={20} />
                         <select
