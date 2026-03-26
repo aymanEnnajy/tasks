@@ -94,21 +94,21 @@ const ForgotPasswordModal = ({ isOpen, onClose }) => {
                         exit={{ opacity: 0, y: -10 }}
                         className="space-y-6"
                     >
-                        <p className="text-slate-400 font-bold text-sm">
+                        <p className="text-zinc-400 font-bold text-sm">
                             Enter your email address and we'll help you regain access to your account.
                         </p>
 
                         <form onSubmit={handleVerifyEmail} className="space-y-4">
                             <div className="space-y-3">
-                                <label className="text-[10px] font-black text-slate-500 uppercase tracking-[3px] ml-1">Email Address</label>
+                                <label className="text-[10px] font-black text-zinc-500 uppercase tracking-[3px] ml-1">Email Address</label>
                                 <div className="relative group">
-                                    <Mail className="absolute left-5 top-1/2 -translate-y-1/2 text-slate-600 group-focus-within:text-blue-500" size={18} />
+                                    <Mail className="absolute left-5 top-1/2 -translate-y-1/2 text-zinc-600 group-focus-within:text-white" size={18} />
                                     <input
                                         type="email"
                                         value={email}
                                         onChange={(e) => setEmail(e.target.value)}
                                         placeholder="name@company.com"
-                                        className="w-full bg-slate-900 border border-white/5 rounded-2xl py-4 pl-12 pr-6 focus:ring-2 focus:ring-blue-500 focus:bg-slate-950 outline-none transition-all text-white font-bold placeholder:text-slate-600"
+                                        className="w-full bg-zinc-900 border border-white/5 rounded-2xl py-4 pl-12 pr-6 focus:ring-2 focus:ring-zinc-500 focus:bg-black outline-none transition-all text-white font-bold placeholder:text-zinc-600"
                                     />
                                 </div>
                             </div>
@@ -116,7 +116,7 @@ const ForgotPasswordModal = ({ isOpen, onClose }) => {
                             <button
                                 type="submit"
                                 disabled={verifyLoading}
-                                className="bg-gradient-to-r from-blue-600 to-blue-500 hover:from-blue-500 hover:to-blue-400 text-white font-black py-4 px-6 rounded-2xl shadow-xl shadow-blue-500/20 transition-all flex items-center justify-center gap-3 active:scale-95 text-[10px] uppercase tracking-widest w-full disabled:opacity-50"
+                                className="bg-white hover:bg-zinc-200 text-black font-black py-4 px-6 rounded-2xl shadow-xl shadow-white/10 transition-all flex items-center justify-center gap-3 active:scale-95 text-[10px] uppercase tracking-widest w-full disabled:opacity-50"
                             >
                                 {verifyLoading ? <Loader2 size={16} className="animate-spin" /> : <Mail size={16} />}
                                 {verifyLoading ? 'Verifying...' : 'Verify Email'}
@@ -136,27 +136,27 @@ const ForgotPasswordModal = ({ isOpen, onClose }) => {
                             <span className="text-sm font-bold text-green-400">{email} verified</span>
                         </div>
 
-                        <p className="text-slate-400 font-bold text-sm">
+                        <p className="text-zinc-400 font-bold text-sm">
                             Create a strong new password for your account.
                         </p>
 
                         <form onSubmit={handleResetPassword} className="space-y-4">
                             {/* New Password */}
                             <div className="space-y-3">
-                                <label className="text-[10px] font-black text-slate-500 uppercase tracking-[3px] ml-1">New Password</label>
+                                <label className="text-[10px] font-black text-zinc-500 uppercase tracking-[3px] ml-1">New Password</label>
                                 <div className="relative group">
-                                    <Lock className="absolute left-5 top-1/2 -translate-y-1/2 text-slate-600 group-focus-within:text-blue-500" size={18} />
+                                    <Lock className="absolute left-5 top-1/2 -translate-y-1/2 text-zinc-600 group-focus-within:text-white" size={18} />
                                     <input
                                         type={showPassword.new ? 'text' : 'password'}
                                         value={newPassword}
                                         onChange={(e) => setNewPassword(e.target.value)}
                                         placeholder="Enter new password"
-                                        className="w-full bg-slate-900 border border-white/5 rounded-2xl py-4 pl-12 pr-14 focus:ring-2 focus:ring-blue-500 focus:bg-slate-950 outline-none transition-all text-white font-bold placeholder:text-slate-600"
+                                        className="w-full bg-zinc-900 border border-white/5 rounded-2xl py-4 pl-12 pr-14 focus:ring-2 focus:ring-zinc-500 focus:bg-black outline-none transition-all text-white font-bold placeholder:text-zinc-600"
                                     />
                                     <button
                                         type="button"
                                         onClick={() => setShowPassword({ ...showPassword, new: !showPassword.new })}
-                                        className="absolute right-5 top-1/2 -translate-y-1/2 text-slate-500 hover:text-blue-500 transition-colors"
+                                        className="absolute right-5 top-1/2 -translate-y-1/2 text-zinc-500 hover:text-white transition-colors"
                                     >
                                         {showPassword.new ? <EyeOff size={18} /> : <Eye size={18} />}
                                     </button>
@@ -165,27 +165,27 @@ const ForgotPasswordModal = ({ isOpen, onClose }) => {
 
                             {/* Confirm Password */}
                             <div className="space-y-3">
-                                <label className="text-[10px] font-black text-slate-500 uppercase tracking-[3px] ml-1">Confirm Password</label>
+                                <label className="text-[10px] font-black text-zinc-500 uppercase tracking-[3px] ml-1">Confirm Password</label>
                                 <div className="relative group">
-                                    <Lock className="absolute left-5 top-1/2 -translate-y-1/2 text-slate-600 group-focus-within:text-blue-500" size={18} />
+                                    <Lock className="absolute left-5 top-1/2 -translate-y-1/2 text-zinc-600 group-focus-within:text-white" size={18} />
                                     <input
                                         type={showPassword.confirm ? 'text' : 'password'}
                                         value={confirmPassword}
                                         onChange={(e) => setConfirmPassword(e.target.value)}
                                         placeholder="Confirm new password"
-                                        className="w-full bg-slate-900 border border-white/5 rounded-2xl py-4 pl-12 pr-14 focus:ring-2 focus:ring-blue-500 focus:bg-slate-950 outline-none transition-all text-white font-bold placeholder:text-slate-600"
+                                        className="w-full bg-zinc-900 border border-white/5 rounded-2xl py-4 pl-12 pr-14 focus:ring-2 focus:ring-zinc-500 focus:bg-black outline-none transition-all text-white font-bold placeholder:text-zinc-600"
                                     />
                                     <button
                                         type="button"
                                         onClick={() => setShowPassword({ ...showPassword, confirm: !showPassword.confirm })}
-                                        className="absolute right-5 top-1/2 -translate-y-1/2 text-slate-500 hover:text-blue-500 transition-colors"
+                                        className="absolute right-5 top-1/2 -translate-y-1/2 text-zinc-500 hover:text-white transition-colors"
                                     >
                                         {showPassword.confirm ? <EyeOff size={18} /> : <Eye size={18} />}
                                     </button>
                                 </div>
                             </div>
 
-                            <div className="grid grid-cols-2 gap-3 pt-2">
+                             <div className="grid grid-cols-2 gap-3 pt-2">
                                 <button
                                     type="button"
                                     onClick={() => {
@@ -193,14 +193,14 @@ const ForgotPasswordModal = ({ isOpen, onClose }) => {
                                         setNewPassword('');
                                         setConfirmPassword('');
                                     }}
-                                    className="bg-slate-800 hover:bg-slate-700 text-white font-black py-4 px-6 rounded-2xl transition-all flex items-center justify-center gap-2 active:scale-95 text-[10px] uppercase tracking-widest"
+                                    className="bg-zinc-800 hover:bg-zinc-700 text-white font-black py-4 px-6 rounded-2xl transition-all flex items-center justify-center gap-2 active:scale-95 text-[10px] uppercase tracking-widest"
                                 >
                                     Back
                                 </button>
                                 <button
                                     type="submit"
                                     disabled={resetLoading}
-                                    className="bg-gradient-to-r from-blue-600 to-blue-500 hover:from-blue-500 hover:to-blue-400 text-white font-black py-4 px-6 rounded-2xl shadow-xl shadow-blue-500/20 transition-all flex items-center justify-center gap-2 active:scale-95 text-[10px] uppercase tracking-widest disabled:opacity-50"
+                                    className="bg-white hover:bg-zinc-200 text-black font-black py-4 px-6 rounded-2xl shadow-xl shadow-white/10 transition-all flex items-center justify-center gap-2 active:scale-95 text-[10px] uppercase tracking-widest disabled:opacity-50"
                                 >
                                     {resetLoading ? <Loader2 size={16} className="animate-spin" /> : <Lock size={16} />}
                                     {resetLoading ? 'Resetting...' : 'Reset'}

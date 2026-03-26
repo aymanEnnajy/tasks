@@ -43,14 +43,14 @@ const NotificationPanel = ({ isOpen, onClose, tasks = [] }) => {
                         className="fixed top-20 right-4 left-4 lg:absolute lg:top-24 lg:right-6 lg:left-auto z-50 w-auto lg:w-96 glass-panel rounded-3xl border border-white/10 shadow-2xl overflow-hidden max-h-[70vh] flex flex-col"
                     >
                         {/* Header */}
-                        <div className="bg-gradient-to-r from-rose-600/20 to-amber-600/20 border-b border-white/10 p-4 flex items-center justify-between">
+                        <div className="bg-gradient-to-r from-zinc-600/10 to-zinc-800/10 border-b border-white/10 p-4 flex items-center justify-between">
                             <div className="flex items-center gap-2">
-                                <AlertCircle className="text-amber-500" size={20} />
+                                <AlertCircle className="text-zinc-400" size={20} />
                                 <h3 className="font-black text-white tracking-tight">Upcoming Deadlines</h3>
                             </div>
                             <button
                                 onClick={onClose}
-                                className="p-1 hover:bg-white/10 rounded-lg transition-colors text-slate-400"
+                                className="p-1 hover:bg-white/10 rounded-lg transition-colors text-zinc-500 hover:text-white"
                             >
                                 <X size={18} />
                             </button>
@@ -70,17 +70,13 @@ const NotificationPanel = ({ isOpen, onClose, tasks = [] }) => {
                                             animate={{ opacity: 1, x: 0 }}
                                             transition={{ delay: idx * 0.05 }}
                                             className={`p-4 border-b border-white/5 hover:bg-white/[0.02] transition-colors ${
-                                                overdue ? 'bg-rose-500/10' : dueSoon ? 'bg-amber-500/10' : ''
+                                                overdue ? 'bg-white/5' : ''
                                             }`}
                                         >
                                             <div className="flex items-start gap-3">
                                                 {/* Status Icon */}
-                                                <div className={`mt-1 p-2 rounded-lg flex-shrink-0 ${
-                                                    overdue ? 'bg-rose-500/20' : dueSoon ? 'bg-amber-500/20' : 'bg-blue-500/20'
-                                                }`}>
-                                                    <Clock className={`${
-                                                        overdue ? 'text-rose-500' : dueSoon ? 'text-amber-500' : 'text-blue-500'
-                                                    }`} size={16} />
+                                                <div className={`mt-1 p-2 rounded-lg flex-shrink-0 bg-zinc-800`}>
+                                                    <Clock className="text-zinc-400" size={16} />
                                                 </div>
 
                                                 {/* Content */}
@@ -91,15 +87,13 @@ const NotificationPanel = ({ isOpen, onClose, tasks = [] }) => {
                                                     <div className="flex items-center gap-2 mb-2">
                                                         <span className={`text-[11px] font-black uppercase tracking-wider px-2 py-1 rounded-lg ${
                                                             overdue 
-                                                                ? 'bg-rose-500/30 text-rose-200' 
-                                                                : dueSoon 
-                                                                ? 'bg-amber-500/30 text-amber-200'
-                                                                : 'bg-blue-500/30 text-blue-200'
+                                                                ? 'bg-white/20 text-white' 
+                                                                : 'bg-white/10 text-zinc-300'
                                                         }`}>
                                                             {getDaysLeft(task.end_day)}
                                                         </span>
                                                     </div>
-                                                    <p className="text-[10px] text-slate-400">
+                                                    <p className="text-[10px] text-zinc-500">
                                                         {new Date(task.end_day).toLocaleDateString('en-US', {
                                                             month: 'short',
                                                             day: 'numeric',
@@ -113,9 +107,9 @@ const NotificationPanel = ({ isOpen, onClose, tasks = [] }) => {
                                 })
                             ) : (
                                 <div className="p-12 text-center">
-                                    <CheckCircle2 className="mx-auto text-emerald-500 mb-3 opacity-50" size={32} />
-                                    <p className="text-slate-500 font-bold text-sm">All caught up!</p>
-                                    <p className="text-slate-600 text-[10px] mt-1">No upcoming deadlines</p>
+                                    <CheckCircle2 className="mx-auto text-zinc-500 mb-3 opacity-50" size={32} />
+                                    <p className="text-zinc-500 font-bold text-sm">All caught up!</p>
+                                    <p className="text-zinc-600 text-[10px] mt-1">No upcoming deadlines</p>
                                 </div>
                             )}
                         </div>

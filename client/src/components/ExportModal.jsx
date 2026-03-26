@@ -87,8 +87,8 @@ const ExportModal = ({ isOpen, onClose, tasks = [], categories = [] }) => {
         const completionRate = tasks.length > 0 ? Math.round((completedCount / tasks.length) * 100) : 0;
         
         element.innerHTML = `
-            <div style="text-align: center; margin-bottom: 30px; border-bottom: 3px solid #3b82f6; padding-bottom: 20px;">
-                <h1 style="color: #1f2937; margin: 0; font-size: 28px; font-weight: bold;">TASK REPORT</h1>
+            <div style="text-align: center; margin-bottom: 30px; border-bottom: 3px solid #000; padding-bottom: 20px;">
+                <h1 style="color: #000; margin: 0; font-size: 28px; font-weight: bold;">TASK REPORT</h1>
                 <p style="color: #6b7280; margin: 5px 0; font-size: 12px;">Generated on ${new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}</p>
             </div>
             
@@ -101,15 +101,15 @@ const ExportModal = ({ isOpen, onClose, tasks = [], categories = [] }) => {
                     </tr>
                     <tr>
                         <td style="padding: 10px; border: 1px solid #d1d5db; font-weight: bold; color: #1f2937;">Completed</td>
-                        <td style="padding: 10px; border: 1px solid #d1d5db; color: #10b981;">${completedCount}</td>
+                        <td style="padding: 10px; border: 1px solid #d1d5db; color: #000;">${completedCount}</td>
                     </tr>
                     <tr style="background-color: #f3f4f6;">
                         <td style="padding: 10px; border: 1px solid #d1d5db; font-weight: bold; color: #1f2937;">Pending</td>
-                        <td style="padding: 10px; border: 1px solid #d1d5db; color: #ef4444;">${tasks.length - completedCount}</td>
+                        <td style="padding: 10px; border: 1px solid #d1d5db; color: #6b7280;">${tasks.length - completedCount}</td>
                     </tr>
                     <tr>
                         <td style="padding: 10px; border: 1px solid #d1d5db; font-weight: bold; color: #1f2937;">Completion Rate</td>
-                        <td style="padding: 10px; border: 1px solid #d1d5db; color: #3b82f6; font-weight: bold;">${completionRate}%</td>
+                        <td style="padding: 10px; border: 1px solid #d1d5db; color: #000; font-weight: bold;">${completionRate}%</td>
                     </tr>
                 </table>
             </div>
@@ -130,7 +130,7 @@ const ExportModal = ({ isOpen, onClose, tasks = [], categories = [] }) => {
                             <tr style="background-color: ${idx % 2 === 0 ? '#f9fafb' : '#fff'};">
                                 <td style="padding: 10px; border: 1px solid #d1d5db; color: #1f2937;">${task.title}</td>
                                 <td style="padding: 10px; border: 1px solid #d1d5db; color: #1f2937;">${task.categories?.name || 'Uncategorized'}</td>
-                                <td style="padding: 10px; border: 1px solid #d1d5db; color: ${task.completed ? '#10b981' : '#ef4444'}; font-weight: bold;">${task.completed ? 'Completed' : 'Pending'}</td>
+                                <td style="padding: 10px; border: 1px solid #d1d5db; color: ${task.completed ? '#000' : '#6b7280'}; font-weight: bold;">${task.completed ? 'Completed' : 'Pending'}</td>
                                 <td style="padding: 10px; border: 1px solid #d1d5db; color: #1f2937;">${task.end_day ? new Date(task.end_day).toLocaleDateString() : '-'}</td>
                             </tr>
                         `).join('')}
@@ -176,17 +176,17 @@ const ExportModal = ({ isOpen, onClose, tasks = [], categories = [] }) => {
                     >
                         <div className="glass-panel rounded-3xl border border-white/10 shadow-2xl overflow-hidden">
                             {/* Header */}
-                            <div className="bg-gradient-to-r from-blue-600/20 to-indigo-600/20 border-b border-white/10 p-6 flex items-center justify-between">
+                            <div className="bg-gradient-to-r from-zinc-600/10 to-zinc-800/10 border-b border-white/10 p-6 flex items-center justify-between">
                                 <div className="flex items-center gap-3">
-                                    <Download className="text-blue-500" size={24} />
+                                    <Download className="text-zinc-400" size={24} />
                                     <div>
                                         <h3 className="font-black text-white text-lg">Export Data</h3>
-                                        <p className="text-slate-400 text-[10px] uppercase tracking-wider">Choose your format</p>
+                                        <p className="text-zinc-500 text-[10px] uppercase tracking-wider">Choose your format</p>
                                     </div>
                                 </div>
                                 <button
                                     onClick={onClose}
-                                    className="p-2 hover:bg-white/10 rounded-lg transition-colors text-slate-400 hover:text-white"
+                                    className="p-2 hover:bg-white/10 rounded-lg transition-colors text-zinc-500 hover:text-white"
                                 >
                                     <X size={20} />
                                 </button>
@@ -199,16 +199,16 @@ const ExportModal = ({ isOpen, onClose, tasks = [], categories = [] }) => {
                                     whileHover={{ scale: 1.02 }}
                                     whileTap={{ scale: 0.98 }}
                                     onClick={exportToJSON}
-                                    className="w-full p-4 rounded-2xl border border-white/10 hover:border-blue-500/50 hover:bg-blue-500/10 transition-all group flex items-center gap-4"
+                                    className="w-full p-4 rounded-2xl border border-white/10 hover:border-white/20 hover:bg-white/5 transition-all group flex items-center gap-4"
                                 >
-                                    <div className="p-3 rounded-xl bg-blue-500/20 group-hover:bg-blue-500/30 transition-colors">
-                                        <FileJson className="text-blue-500" size={24} />
+                                    <div className="p-3 rounded-xl bg-zinc-800 group-hover:bg-zinc-700 transition-colors">
+                                        <FileJson className="text-zinc-400 group-hover:text-white" size={24} />
                                     </div>
                                     <div className="text-left flex-1">
                                         <h4 className="font-bold text-white">JSON</h4>
-                                        <p className="text-[10px] text-slate-400">Structured data format</p>
+                                        <p className="text-[10px] text-zinc-500">Structured data format</p>
                                     </div>
-                                    <Download className="text-slate-600 group-hover:text-blue-500 transition-colors" size={20} />
+                                    <Download className="text-zinc-600 group-hover:text-white transition-colors" size={20} />
                                 </motion.button>
 
                                 {/* Excel Export */}
@@ -216,16 +216,16 @@ const ExportModal = ({ isOpen, onClose, tasks = [], categories = [] }) => {
                                     whileHover={{ scale: 1.02 }}
                                     whileTap={{ scale: 0.98 }}
                                     onClick={exportToExcel}
-                                    className="w-full p-4 rounded-2xl border border-white/10 hover:border-emerald-500/50 hover:bg-emerald-500/10 transition-all group flex items-center gap-4"
+                                    className="w-full p-4 rounded-2xl border border-white/10 hover:border-white/20 hover:bg-white/5 transition-all group flex items-center gap-4"
                                 >
-                                    <div className="p-3 rounded-xl bg-emerald-500/20 group-hover:bg-emerald-500/30 transition-colors">
-                                        <FileSpreadsheet className="text-emerald-500" size={24} />
+                                    <div className="p-3 rounded-xl bg-zinc-800 group-hover:bg-zinc-700 transition-colors">
+                                        <FileSpreadsheet className="text-zinc-400 group-hover:text-white" size={24} />
                                     </div>
                                     <div className="text-left flex-1">
                                         <h4 className="font-bold text-white">Excel (CSV)</h4>
-                                        <p className="text-[10px] text-slate-400">Spreadsheet format</p>
+                                        <p className="text-[10px] text-zinc-500">Spreadsheet format</p>
                                     </div>
-                                    <Download className="text-slate-600 group-hover:text-emerald-500 transition-colors" size={20} />
+                                    <Download className="text-zinc-600 group-hover:text-white transition-colors" size={20} />
                                 </motion.button>
 
                                 {/* PDF Export */}
@@ -233,22 +233,22 @@ const ExportModal = ({ isOpen, onClose, tasks = [], categories = [] }) => {
                                     whileHover={{ scale: 1.02 }}
                                     whileTap={{ scale: 0.98 }}
                                     onClick={exportToPDF}
-                                    className="w-full p-4 rounded-2xl border border-white/10 hover:border-rose-500/50 hover:bg-rose-500/10 transition-all group flex items-center gap-4"
+                                    className="w-full p-4 rounded-2xl border border-white/10 hover:border-white/20 hover:bg-white/5 transition-all group flex items-center gap-4"
                                 >
-                                    <div className="p-3 rounded-xl bg-rose-500/20 group-hover:bg-rose-500/30 transition-colors">
-                                        <FileText className="text-rose-500" size={24} />
+                                    <div className="p-3 rounded-xl bg-zinc-800 group-hover:bg-zinc-700 transition-colors">
+                                        <FileText className="text-zinc-400 group-hover:text-white" size={24} />
                                     </div>
                                     <div className="text-left flex-1">
                                         <h4 className="font-bold text-white">PDF</h4>
-                                        <p className="text-[10px] text-slate-400">Professional report</p>
+                                        <p className="text-[10px] text-zinc-500">Professional report</p>
                                     </div>
-                                    <Download className="text-slate-600 group-hover:text-rose-500 transition-colors" size={20} />
+                                    <Download className="text-zinc-600 group-hover:text-white transition-colors" size={20} />
                                 </motion.button>
                             </div>
 
                             {/* Footer */}
                             <div className="border-t border-white/10 p-4 bg-white/[0.02] text-center">
-                                <p className="text-[9px] text-slate-500 uppercase tracking-wider">
+                                <p className="text-[9px] text-zinc-500 uppercase tracking-wider">
                                     Total Tasks: {tasks.length} | Completed: {tasks.filter(t => t.completed).length}
                                 </p>
                             </div>

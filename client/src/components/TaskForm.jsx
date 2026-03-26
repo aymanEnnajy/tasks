@@ -103,7 +103,7 @@ const TaskForm = ({ onSuccess, categories: initialCategories, task = null }) => 
             const { data, error } = await TaskService.addCategory({
                 name: newCategoryName,
                 icon: 'Briefcase',
-                color_gradient: 'from-blue-600 to-indigo-700',
+                color_gradient: 'from-zinc-600 to-zinc-800',
                 owner_id: dbUserId
             });
             if (data) {
@@ -188,28 +188,28 @@ const TaskForm = ({ onSuccess, categories: initialCategories, task = null }) => 
     return (
         <form onSubmit={handleSubmit} className="space-y-8 pb-4">
             <div className="space-y-3">
-                <label className="text-[11px] font-black text-slate-500 uppercase tracking-[3px] ml-1">Objective Title</label>
+                <label className="text-[11px] font-black text-zinc-500 uppercase tracking-[3px] ml-1">Objective Title</label>
                 <div className="relative group">
-                    <Type className="absolute left-5 top-1/2 -translate-y-1/2 text-slate-600 transition-colors group-focus-within:text-blue-500" size={20} />
+                    <Type className="absolute left-5 top-1/2 -translate-y-1/2 text-zinc-600 transition-colors group-focus-within:text-zinc-400" size={20} />
                     <input
                         required
                         value={formData.title}
                         onChange={(e) => setFormData({ ...formData, title: e.target.value })}
-                        className="w-full bg-slate-950/50 border border-white/5 rounded-[24px] py-5 pl-14 pr-8 focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500 focus:bg-slate-950 outline-none transition-all text-white font-bold text-lg placeholder:text-slate-800"
+                        className="w-full bg-black/50 border border-white/5 rounded-[24px] py-5 pl-14 pr-8 focus:ring-4 focus:ring-zinc-500/10 focus:border-zinc-500 focus:bg-black outline-none transition-all text-white font-bold text-lg placeholder:text-zinc-800"
                         placeholder="E.g. Finalize React Architecture"
                     />
                 </div>
             </div>
 
             <div className="space-y-3">
-                <label className="text-[11px] font-black text-slate-500 uppercase tracking-[3px] ml-1">Description <span className="text-slate-800">(Optional)</span></label>
+                <label className="text-[11px] font-black text-zinc-500 uppercase tracking-[3px] ml-1">Description <span className="text-zinc-800">(Optional)</span></label>
                 <div className="relative group">
-                    <AlignLeft className="absolute left-5 top-6 text-slate-600 transition-colors group-focus-within:text-blue-500" size={20} />
+                    <AlignLeft className="absolute left-5 top-6 text-zinc-600 transition-colors group-focus-within:text-zinc-400" size={20} />
                     <textarea
                         value={formData.description}
                         onChange={(e) => setFormData({ ...formData, description: e.target.value })}
                         rows="3"
-                        className="w-full bg-slate-950/50 border border-white/5 rounded-[24px] py-5 pl-14 pr-8 focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500 focus:bg-slate-950 outline-none transition-all text-white font-medium placeholder:text-slate-800 resize-none"
+                        className="w-full bg-black/50 border border-white/5 rounded-[24px] py-5 pl-14 pr-8 focus:ring-4 focus:ring-zinc-500/10 focus:border-zinc-500 focus:bg-black outline-none transition-all text-white font-medium placeholder:text-zinc-800 resize-none"
                         placeholder="Provide context or instructions..."
                     />
                 </div>
@@ -218,43 +218,43 @@ const TaskForm = ({ onSuccess, categories: initialCategories, task = null }) => 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div className="space-y-3">
                     <div className="flex justify-between items-center px-1">
-                        <label className="text-[11px] font-black text-slate-500 uppercase tracking-[3px]">Category</label>
+                        <label className="text-[11px] font-black text-zinc-500 uppercase tracking-[3px]">Category</label>
                         <button
                             type="button"
                             onClick={() => setShowAddCategory(!showAddCategory)}
-                            className="text-[10px] font-black text-blue-500 hover:text-white uppercase tracking-[2px] transition-colors"
+                            className="text-[10px] font-black text-zinc-400 hover:text-white uppercase tracking-[2px] transition-colors"
                         >
                             {showAddCategory ? '[ Cancel ]' : '[ + New ]'}
                         </button>
                     </div>
                     {showAddCategory ? (
-                        <div className="flex gap-2">
+                        <div className="flex flex-col sm:flex-row gap-2">
                             <input
                                 value={newCategoryName}
                                 onChange={(e) => setNewCategoryName(e.target.value)}
-                                className="flex-1 bg-slate-950 border border-blue-500/50 rounded-[24px] py-4 px-6 focus:ring-4 focus:ring-blue-500/20 outline-none transition-all text-white font-bold text-sm"
+                                className="flex-1 bg-black border border-zinc-500/50 rounded-[20px] sm:rounded-[24px] py-4 px-6 focus:ring-4 focus:ring-zinc-500/20 outline-none transition-all text-white font-bold text-sm"
                                 placeholder="Category Name..."
                             />
                             <button
                                 type="button"
                                 onClick={handleAddCategory}
-                                className="bg-blue-600 px-4 rounded-[20px] font-black text-white hover:bg-blue-500 transition-all text-[10px] tracking-widest uppercase"
+                                className="bg-zinc-700 px-4 py-3 sm:py-0 rounded-[20px] font-black text-white hover:bg-zinc-600 transition-all text-[10px] tracking-widest uppercase h-11 sm:h-auto"
                             >
                                 Add
                             </button>
                         </div>
                     ) : (
                         <div className="relative">
-                            <Layout className="absolute left-5 top-1/2 -translate-y-1/2 text-slate-600" size={20} />
+                            <Layout className="absolute left-5 top-1/2 -translate-y-1/2 text-zinc-600" size={20} />
                             <select
                                 required
                                 value={formData.category_id}
                                 onChange={(e) => handleCategoryChange(e.target.value)}
-                                className="w-full bg-slate-950/50 border border-white/5 rounded-[24px] py-5 pl-14 pr-10 focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500 outline-none transition-all text-white font-bold appearance-none cursor-pointer"
+                                className="w-full bg-black/50 border border-white/5 rounded-[24px] py-5 pl-14 pr-10 focus:ring-4 focus:ring-zinc-500/10 focus:border-zinc-500 outline-none transition-all text-white font-bold appearance-none cursor-pointer"
                             >
-                                <option value="" className="bg-slate-950">Select Module</option>
+                                <option value="" className="bg-black">Select Module</option>
                                 {categories.map(cat => (
-                                    <option key={cat.id} value={cat.id} className="bg-slate-950">{cat.name}</option>
+                                    <option key={cat.id} value={cat.id} className="bg-black">{cat.name}</option>
                                 ))}
                             </select>
                             <div className="absolute right-5 top-1/2 -translate-y-1/2 pointer-events-none opacity-40 text-white">▼</div>
@@ -264,44 +264,44 @@ const TaskForm = ({ onSuccess, categories: initialCategories, task = null }) => 
 
                 <div className="space-y-3">
                     <div className="flex justify-between items-center px-1">
-                        <label className="text-[11px] font-black text-slate-500 uppercase tracking-[3px]">Specialization</label>
+                        <label className="text-[11px] font-black text-zinc-500 uppercase tracking-[3px]">Specialization</label>
                         <button
                             type="button"
                             disabled={!formData.category_id}
                             onClick={() => setShowAddSubCategory(!showAddSubCategory)}
-                            className="text-[10px] font-black text-blue-500 hover:text-white uppercase tracking-[2px] transition-colors disabled:opacity-20"
+                            className="text-[10px] font-black text-zinc-400 hover:text-white uppercase tracking-[2px] transition-colors disabled:opacity-20"
                         >
                             {showAddSubCategory ? '[ Cancel ]' : '[ + New ]'}
                         </button>
                     </div>
                     {showAddSubCategory ? (
-                        <div className="flex gap-2">
+                        <div className="flex flex-col sm:flex-row gap-2">
                             <input
                                 value={newSubCategoryName}
                                 onChange={(e) => setNewSubCategoryName(e.target.value)}
-                                className="flex-1 bg-slate-950 border border-blue-500/50 rounded-[24px] py-4 px-6 focus:ring-4 focus:ring-blue-500/20 outline-none transition-all text-white font-bold text-sm"
+                                className="flex-1 bg-black border border-zinc-500/50 rounded-[20px] sm:rounded-[24px] py-4 px-6 focus:ring-4 focus:ring-zinc-500/20 outline-none transition-all text-white font-bold text-sm"
                                 placeholder="Sub-category..."
                             />
                             <button
                                 type="button"
                                 onClick={handleAddSubCategory}
-                                className="bg-blue-600 px-4 rounded-[20px] font-black text-white hover:bg-blue-500 transition-all text-[10px] tracking-widest uppercase"
+                                className="bg-zinc-700 px-4 py-3 sm:py-0 rounded-[20px] font-black text-white hover:bg-zinc-600 transition-all text-[10px] tracking-widest uppercase h-11 sm:h-auto"
                             >
                                 Add
                             </button>
                         </div>
                     ) : (
                         <div className="relative">
-                            <List className="absolute left-5 top-1/2 -translate-y-1/2 text-slate-600" size={20} />
+                            <List className="absolute left-5 top-1/2 -translate-y-1/2 text-zinc-600" size={20} />
                             <select
                                 value={formData.sub_category_id}
                                 onChange={(e) => setFormData({ ...formData, sub_category_id: e.target.value })}
-                                className="w-full bg-slate-950/50 border border-white/5 rounded-[24px] py-5 pl-14 pr-10 focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500 outline-none transition-all text-white font-bold appearance-none cursor-pointer disabled:opacity-20"
+                                className="w-full bg-black/50 border border-white/5 rounded-[24px] py-5 pl-14 pr-10 focus:ring-4 focus:ring-zinc-500/10 focus:border-zinc-500 outline-none transition-all text-white font-bold appearance-none cursor-pointer disabled:opacity-20"
                                 disabled={!formData.category_id}
                             >
-                                <option value="" className="bg-slate-950">Select Skillset</option>
+                                <option value="" className="bg-black">Select Skillset</option>
                                 {subCategories.map(sub => (
-                                    <option key={sub.id} value={sub.id} className="bg-slate-950">{sub.name}</option>
+                                    <option key={sub.id} value={sub.id} className="bg-black">{sub.name}</option>
                                 ))}
                             </select>
                             <div className="absolute right-5 top-1/2 -translate-y-1/2 pointer-events-none opacity-40 text-white">▼</div>
@@ -312,11 +312,11 @@ const TaskForm = ({ onSuccess, categories: initialCategories, task = null }) => 
 
             <div className="space-y-3">
                 <div className="flex justify-between items-center px-1">
-                    <label className="text-[11px] font-black text-slate-500 uppercase tracking-[3px]">Linked Enterprise Site</label>
+                    <label className="text-[11px] font-black text-zinc-500 uppercase tracking-[3px]">Linked Enterprise Site</label>
                     <button
                         type="button"
                         onClick={() => setShowAddSite(!showAddSite)}
-                        className="text-[10px] font-black text-blue-500 hover:text-white uppercase tracking-[2px] transition-colors"
+                        className="text-[10px] font-black text-zinc-400 hover:text-white uppercase tracking-[2px] transition-colors"
                     >
                         {showAddSite ? '[ Cancel ]' : '[ + Register New Site ]'}
                     </button>
@@ -329,12 +329,12 @@ const TaskForm = ({ onSuccess, categories: initialCategories, task = null }) => 
                             initial={{ opacity: 0, height: 0, y: -10 }}
                             animate={{ opacity: 1, height: 'auto', y: 0 }}
                             exit={{ opacity: 0, height: 0, y: -10 }}
-                            className="flex gap-4 overflow-hidden"
+                            className="flex flex-col sm:flex-row gap-4 overflow-hidden"
                         >
                             <input
                                 value={newSiteName}
                                 onChange={(e) => setNewSiteName(e.target.value)}
-                                className="flex-1 bg-slate-950 border border-blue-500/50 rounded-[20px] py-4 px-6 focus:ring-4 focus:ring-blue-500/20 outline-none transition-all text-white font-bold"
+                                className="flex-1 bg-black border border-zinc-500/50 rounded-[20px] py-4 px-6 focus:ring-4 focus:ring-zinc-500/20 outline-none transition-all text-white font-bold"
                                 placeholder="Enter site name..."
                                 autoFocus
                             />
@@ -342,7 +342,7 @@ const TaskForm = ({ onSuccess, categories: initialCategories, task = null }) => 
                                 type="button"
                                 onClick={handleAddSite}
                                 disabled={loading}
-                                className="bg-blue-600 px-6 rounded-[20px] font-black text-white hover:bg-blue-500 transition-all uppercase text-[10px] tracking-widest"
+                                className="bg-zinc-700 px-6 py-4 sm:py-0 rounded-[20px] font-black text-white hover:bg-zinc-600 transition-all uppercase text-[10px] tracking-widest h-12 sm:h-auto"
                             >
                                 {loading ? <Loader2 size={16} className="animate-spin" /> : 'Confirm'}
                             </button>
@@ -351,15 +351,15 @@ const TaskForm = ({ onSuccess, categories: initialCategories, task = null }) => 
                 </AnimatePresence>
                 {!showAddSite && (
                     <div className="relative">
-                        <Globe className="absolute left-5 top-1/2 -translate-y-1/2 text-slate-600" size={20} />
+                        <Globe className="absolute left-5 top-1/2 -translate-y-1/2 text-zinc-600" size={20} />
                         <select
                             value={formData.site_id}
                             onChange={(e) => setFormData({ ...formData, site_id: e.target.value })}
-                            className="w-full bg-slate-950/50 border border-white/5 rounded-[24px] py-5 pl-14 pr-10 focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500 outline-none transition-all text-white font-bold appearance-none cursor-pointer"
+                            className="w-full bg-black/50 border border-white/5 rounded-[24px] py-5 pl-14 pr-10 focus:ring-4 focus:ring-zinc-500/10 focus:border-zinc-500 outline-none transition-all text-white font-bold appearance-none cursor-pointer"
                         >
-                            <option value="" className="bg-slate-950">Private Initiative (No Site)</option>
+                            <option value="" className="bg-black">Private Initiative (No Site)</option>
                             {sites.map(site => (
-                                <option key={site.id} value={site.id} className="bg-slate-950">{site.name}</option>
+                                <option key={site.id} value={site.id} className="bg-black">{site.name}</option>
                             ))}
                         </select>
                         <div className="absolute right-5 top-1/2 -translate-y-1/2 pointer-events-none opacity-40 text-white">▼</div>
@@ -368,19 +368,19 @@ const TaskForm = ({ onSuccess, categories: initialCategories, task = null }) => 
             </div>
 
             <div className="space-y-3">
-                <label className="text-[11px] font-black text-slate-500 uppercase tracking-[3px] ml-1">Deadline <span className="text-slate-800">(Optional)</span></label>
+                <label className="text-[11px] font-black text-zinc-500 uppercase tracking-[3px] ml-1">Deadline <span className="text-zinc-800">(Optional)</span></label>
                 <input
                     type="date"
                     value={formData.end_day || ''}
                     onChange={(e) => setFormData({ ...formData, end_day: e.target.value })}
-                    className="w-full bg-slate-950/50 border border-white/5 rounded-[24px] py-5 px-6 focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500 focus:bg-slate-950 outline-none transition-all text-white font-bold"
+                    className="w-full bg-black/50 border border-white/5 rounded-[24px] py-5 px-6 focus:ring-4 focus:ring-zinc-500/10 focus:border-zinc-500 focus:bg-black outline-none transition-all text-white font-bold"
                 />
             </div>
 
             <button
                 type="submit"
                 disabled={loading}
-                className="w-full bg-blue-600 hover:bg-blue-500 text-white font-black py-5 rounded-[28px] shadow-3xl shadow-blue-500/40 transition-all flex items-center justify-center gap-4 depth-button active:scale-[0.98] mt-4 uppercase tracking-[4px] text-xs border border-white/10"
+                className="w-full bg-zinc-700 hover:bg-zinc-600 text-white font-black py-4 sm:py-5 rounded-[20px] sm:rounded-[28px] shadow-3xl shadow-zinc-700/40 transition-all flex items-center justify-center gap-4 depth-button active:scale-[0.98] mt-4 uppercase tracking-[2px] sm:tracking-[4px] text-[10px] sm:text-xs border border-white/10"
             >
                 {loading ? <Loader2 className="animate-spin" /> : (
                     <>

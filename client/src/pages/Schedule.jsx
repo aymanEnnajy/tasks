@@ -48,26 +48,26 @@ const Schedule = () => {
                         animate={{ opacity: 1, y: 0 }}
                         className="text-4xl lg:text-6xl font-black text-white mb-4 tracking-tighter"
                     >
-                        Time <span className="text-blue-500 italic">Grid.</span>
+                        Time <span className="text-zinc-400 italic">Grid.</span>
                     </motion.h2>
                     <div className="flex items-center gap-4">
-                        <button onClick={prevMonth} className="p-2 glass-card rounded-xl text-slate-400 hover:text-white transition-all">
+                        <button onClick={prevMonth} className="p-2 glass-card rounded-xl text-zinc-400 hover:text-white transition-all">
                             <ChevronLeft size={20} />
                         </button>
                         <h3 className="text-2xl font-black text-white italic tracking-tight w-48 text-center">
                             {format(currentDate, 'MMMM yyyy')}
                         </h3>
-                        <button onClick={nextMonth} className="p-2 glass-card rounded-xl text-slate-400 hover:text-white transition-all">
+                        <button onClick={nextMonth} className="p-2 glass-card rounded-xl text-zinc-400 hover:text-white transition-all">
                             <ChevronRight size={20} />
                         </button>
                     </div>
                 </div>
             </header>
 
-            <div className="glass-panel rounded-[50px] border-white/5 overflow-hidden">
-                <div className="grid grid-cols-7 border-b border-white/5 bg-slate-900/50">
-                    {['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map(day => (
-                        <div key={day} className="p-6 text-center text-[10px] font-black text-slate-500 uppercase tracking-[3px]">
+            <div className="glass-panel rounded-[30px] sm:rounded-[50px] border-white/5 overflow-hidden">
+                <div className="grid grid-cols-7 border-b border-white/5 bg-zinc-900/50">
+                    {['S', 'M', 'T', 'W', 'T', 'F', 'S'].map(day => (
+                        <div key={day} className="p-3 sm:p-6 text-center text-[8px] sm:text-[10px] font-black text-zinc-500 uppercase tracking-[2px] sm:tracking-[3px]">
                             {day}
                         </div>
                     ))}
@@ -82,16 +82,16 @@ const Schedule = () => {
                         return (
                             <div
                                 key={i}
-                                className={`min-h-[140px] p-4 border-r border-b border-white/5 transition-all hover:bg-white/[0.02] ${!isCurrentMonth ? 'opacity-20' : ''
+                                className={`min-h-[80px] sm:min-h-[140px] p-2 sm:p-4 border-r border-b border-white/5 transition-all hover:bg-white/[0.02] ${!isCurrentMonth ? 'opacity-20' : ''
                                     }`}
                             >
-                                <div className="flex justify-between items-start mb-4">
-                                    <span className={`text-sm font-black ${isToday ? 'text-blue-500' : 'text-slate-500'}`}>
+                                <div className="flex justify-between items-start mb-2 sm:mb-4">
+                                    <span className={`text-[10px] sm:text-sm font-black ${isToday ? 'text-zinc-400' : 'text-zinc-500'}`}>
                                         {format(day, 'd')}
                                     </span>
                                 </div>
-                                <div className="space-y-2">
-                                    {dayTasks.slice(0, 3).map(task => (
+                                <div className="space-y-1">
+                                    {dayTasks.slice(0, 2).map(task => (
                                         <motion.div 
                                             key={task.id} 
                                             whileHover={{ scale: 1.05 }}
@@ -109,12 +109,16 @@ const Schedule = () => {
                                                     }
                                                 }, 100);
                                             }}
-                                            className="text-[9px] font-black text-white bg-slate-800/50 p-2 rounded-lg truncate border border-white/5 hover:border-blue-500 hover:bg-blue-500/20 cursor-pointer transition-all"
+                                            className="text-[7px] sm:text-[9px] font-black text-white bg-zinc-800/50 p-1 sm:p-2 rounded-md sm:rounded-lg truncate border border-white/5 hover:border-zinc-500 hover:bg-zinc-500/20 cursor-pointer transition-all"
                                             title={task.title}
                                         >
-                                            {task.title}
+                                            <span className="hidden sm:inline">{task.title}</span>
+                                            <span className="sm:hidden">●</span>
                                         </motion.div>
                                     ))}
+                                    {dayTasks.length > 2 && (
+                                        <div className="text-[6px] sm:text-[8px] text-zinc-600 font-black uppercase text-center">+{dayTasks.length - 2}</div>
+                                    )}
                                 </div>
                             </div>
                         );

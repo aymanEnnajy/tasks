@@ -55,7 +55,14 @@ export const TaskService = {
     },
 
     toggleTask: async (id, currentStatus) => {
-        return await supabase.from('tasks').update({ completed: !currentStatus }).eq('id', id);
+        const completed = !currentStatus;
+        const updateData = { completed };
+        if (completed) {
+            updateData.completed_at = new Date().toISOString();
+        } else {
+            updateData.completed_at = null;
+        }
+        return await supabase.from('tasks').update(updateData).eq('id', id);
     },
 
     deleteTask: async (id) => {

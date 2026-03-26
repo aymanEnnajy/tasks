@@ -61,7 +61,12 @@ const MyTasks = () => {
         try {
             const { error } = await TaskService.toggleTask(id, completed);
             if (!error) {
-                setTasks(prev => prev.map(t => t.id === id ? { ...t, completed: !completed } : t));
+                const now = new Date().toISOString();
+                setTasks(prev => prev.map(t => t.id === id ? { 
+                    ...t, 
+                    completed: !completed, 
+                    completed_at: !completed ? now : null 
+                } : t));
                 toast.success(completed ? 'Task reopened' : 'Task completed! ✨');
             }
         } catch (error) {
@@ -164,14 +169,14 @@ const MyTasks = () => {
                         animate={{ opacity: 1, y: 0 }}
                         className="text-4xl lg:text-6xl font-black text-white mb-4 tracking-tighter"
                     >
-                        Task <span className="text-blue-500 italic">Inventory.</span>
+                        Task <span className="text-zinc-400 italic">Inventory.</span>
                     </motion.h2>
-                    <p className="text-slate-500 font-black uppercase tracking-[3px] text-[10px]">Total Records: {tasks.length}</p>
+                    <p className="text-zinc-500 font-black uppercase tracking-[3px] text-[10px]">Total Records: {tasks.length}</p>
                 </div>
 
                 <div className="flex items-center gap-4 w-full md:w-auto">
                     <div className="relative group flex-1 md:w-80">
-                        <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-600 group-focus-within:text-blue-500 transition-colors" size={18} />
+                        <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-zinc-600 group-focus-within:text-zinc-400 transition-colors" size={18} />
                         <input
                             placeholder="Search records..."
                             value={searchTerm}
@@ -180,7 +185,7 @@ const MyTasks = () => {
                                 setSearchTerm(query);
                                 setGlobalSearchQuery(query);
                             }}
-                            className="w-full bg-slate-900/50 border border-white/5 rounded-2xl py-3 pl-12 pr-6 focus:ring-2 focus:ring-blue-500/50 outline-none transition-all font-bold text-sm text-white"
+                            className="w-full bg-zinc-900/50 border border-white/5 rounded-2xl py-3 pl-12 pr-6 focus:ring-2 focus:ring-zinc-500/50 outline-none transition-all font-bold text-sm text-white"
                         />
                     </div>
                     {paginatedTasks.length > 0 && (
@@ -199,7 +204,7 @@ const MyTasks = () => {
                             setEditingTask(null);
                             setIsTaskModalOpen(true);
                         }}
-                        className="bg-blue-600 hover:bg-blue-500 p-3.5 rounded-2xl shadow-xl shadow-blue-600/30 active:scale-95 transition-all depth-button group"
+                        className="bg-zinc-700 hover:bg-zinc-600 p-3.5 rounded-2xl shadow-xl shadow-zinc-700/30 active:scale-95 transition-all depth-button group"
                     >
                         <Plus size={24} className="text-white group-hover:rotate-90 transition-transform" />
                     </button>
@@ -218,14 +223,14 @@ const MyTasks = () => {
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                         {/* Status Filter */}
                         <div>
-                            <label className="text-sm font-bold text-slate-400 uppercase tracking-wider block mb-3">Status</label>
+                            <label className="text-sm font-bold text-zinc-400 uppercase tracking-wider block mb-3">Status</label>
                             <select
                                 value={filters.status}
                                 onChange={(e) => {
                                     setFilters({ ...filters, status: e.target.value });
                                     setCurrentPage(1);
                                 }}
-                                className="w-full bg-slate-800/50 border border-white/10 rounded-xl py-2 px-4 text-white font-bold text-sm focus:ring-2 focus:ring-blue-500/50 outline-none"
+                                className="w-full bg-zinc-800/50 border border-white/10 rounded-xl py-2 px-4 text-white font-bold text-sm focus:ring-2 focus:ring-zinc-500/50 outline-none"
                             >
                                 <option value="all">All Tasks</option>
                                 <option value="pending">Pending</option>
@@ -235,14 +240,14 @@ const MyTasks = () => {
 
                         {/* Category Filter */}
                         <div>
-                            <label className="text-sm font-bold text-slate-400 uppercase tracking-wider block mb-3">Category</label>
+                            <label className="text-sm font-bold text-zinc-400 uppercase tracking-wider block mb-3">Category</label>
                             <select
                                 value={filters.category}
                                 onChange={(e) => {
                                     setFilters({ ...filters, category: e.target.value });
                                     setCurrentPage(1);
                                 }}
-                                className="w-full bg-slate-800/50 border border-white/10 rounded-xl py-2 px-4 text-white font-bold text-sm focus:ring-2 focus:ring-blue-500/50 outline-none"
+                                className="w-full bg-zinc-800/50 border border-white/10 rounded-xl py-2 px-4 text-white font-bold text-sm focus:ring-2 focus:ring-zinc-500/50 outline-none"
                             >
                                 <option value="all">All Categories</option>
                                 {categories.map(cat => (
@@ -253,14 +258,14 @@ const MyTasks = () => {
 
                         {/* Deadline Filter */}
                         <div>
-                            <label className="text-sm font-bold text-slate-400 uppercase tracking-wider block mb-3">Deadline</label>
+                            <label className="text-sm font-bold text-zinc-400 uppercase tracking-wider block mb-3">Deadline</label>
                             <select
                                 value={filters.hasDeadline}
                                 onChange={(e) => {
                                     setFilters({ ...filters, hasDeadline: e.target.value });
                                     setCurrentPage(1);
                                 }}
-                                className="w-full bg-slate-800/50 border border-white/10 rounded-xl py-2 px-4 text-white font-bold text-sm focus:ring-2 focus:ring-blue-500/50 outline-none"
+                                className="w-full bg-zinc-800/50 border border-white/10 rounded-xl py-2 px-4 text-white font-bold text-sm focus:ring-2 focus:ring-zinc-500/50 outline-none"
                             >
                                 <option value="all">All Tasks</option>
                                 <option value="hasDeadline">Has Deadline</option>
@@ -271,10 +276,10 @@ const MyTasks = () => {
 
                     {/* Date Range Filter */}
                     <div className="mt-6">
-                        <label className="text-sm font-bold text-slate-400 uppercase tracking-wider block mb-3">Created Date Range</label>
+                        <label className="text-sm font-bold text-zinc-400 uppercase tracking-wider block mb-3">Created Date Range</label>
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <div>
-                                <label className="text-xs text-slate-500 block mb-2">From</label>
+                                <label className="text-xs text-zinc-500 block mb-2">From</label>
                                 <input
                                     type="date"
                                     value={filters.dateFrom}
@@ -282,11 +287,11 @@ const MyTasks = () => {
                                         setFilters({ ...filters, dateFrom: e.target.value });
                                         setCurrentPage(1);
                                     }}
-                                    className="w-full bg-slate-800/50 border border-white/10 rounded-xl py-2 px-4 text-white font-bold text-sm focus:ring-2 focus:ring-blue-500/50 outline-none"
+                                    className="w-full bg-zinc-800/50 border border-white/10 rounded-xl py-2 px-4 text-white font-bold text-sm focus:ring-2 focus:ring-zinc-500/50 outline-none"
                                 />
                             </div>
                             <div>
-                                <label className="text-xs text-slate-500 block mb-2">To</label>
+                                <label className="text-xs text-zinc-500 block mb-2">To</label>
                                 <input
                                     type="date"
                                     value={filters.dateTo}
@@ -294,7 +299,7 @@ const MyTasks = () => {
                                         setFilters({ ...filters, dateTo: e.target.value });
                                         setCurrentPage(1);
                                     }}
-                                    className="w-full bg-slate-800/50 border border-white/10 rounded-xl py-2 px-4 text-white font-bold text-sm focus:ring-2 focus:ring-blue-500/50 outline-none"
+                                    className="w-full bg-zinc-800/50 border border-white/10 rounded-xl py-2 px-4 text-white font-bold text-sm focus:ring-2 focus:ring-zinc-500/50 outline-none"
                                 />
                             </div>
                         </div>
@@ -309,7 +314,7 @@ const MyTasks = () => {
                                 setFilters({ status: 'all', category: 'all', hasDeadline: 'all' });
                                 setCurrentPage(1);
                             }}
-                            className="px-6 py-2 bg-slate-700 hover:bg-slate-600 text-white font-bold rounded-xl transition-colors"
+                            className="px-6 py-2 bg-zinc-700 hover:bg-zinc-600 text-white font-bold rounded-xl transition-colors"
                         >
                             Reset Filters
                         </motion.button>
@@ -325,47 +330,43 @@ const MyTasks = () => {
                     onClick={() => setShowFilters(!showFilters)}
                     className={`px-6 py-3 font-bold rounded-2xl transition-all flex items-center gap-2 border ${
                         showFilters
-                            ? 'bg-blue-600 text-white border-blue-500/50'
-                            : 'bg-slate-800/50 text-slate-400 border-white/10 hover:text-white'
+                            ? 'bg-zinc-700 text-white border-zinc-500/50'
+                            : 'bg-zinc-800/50 text-zinc-400 border-white/10 hover:text-white'
                     }`}
                 >
                     <Filter size={20} />
                     <span className="text-sm">Filters</span>
                     {Object.values(filters).some(f => f !== 'all') && (
-                        <span className="ml-2 px-2 py-1 bg-blue-500 text-white text-xs font-bold rounded">
+                        <span className="ml-2 px-2 py-1 bg-zinc-500 text-white text-xs font-bold rounded">
                             {Object.values(filters).filter(f => f !== 'all').length}
                         </span>
                     )}
                 </motion.button>
-                <p className="text-slate-500 text-sm font-bold">
+                <p className="text-zinc-500 text-sm font-bold">
                     Showing {filteredTasks.length} of {tasks.length} tasks
                 </p>
             </div>
 
             <div className="glass-panel rounded-[40px] border-white/5 overflow-hidden">
-                <div className="overflow-x-auto scrollbar-thin scrollbar-thumb-blue-600 scrollbar-track-slate-800">
+                {/* Desktop Table */}
+                <div className="hidden md:block overflow-x-auto scrollbar-thin scrollbar-thumb-zinc-700 scrollbar-track-zinc-900">
                     <table className="w-full text-left border-collapse min-w-[1200px]">
                         <thead>
                             <tr className="border-b border-white/5 bg-white/[0.02]">
-                                <th className="p-6 text-[10px] font-black text-slate-500 uppercase tracking-[3px] min-w-[80px] text-center">Status</th>
-                                <th className="p-6 text-[10px] font-black text-slate-500 uppercase tracking-[3px] min-w-[200px]">Task Detail</th>
-                                <th className="p-6 text-[10px] font-black text-slate-500 uppercase tracking-[3px] min-w-[180px]">Description</th>
-                                <th className="p-6 text-[10px] font-black text-slate-500 uppercase tracking-[3px] min-w-[120px]">Category</th>
-                                <th className="p-6 text-[10px] font-black text-slate-500 uppercase tracking-[3px] min-w-[120px]">Site</th>
-                                <th className="p-6 text-[10px] font-black text-slate-500 uppercase tracking-[3px] min-w-[140px]">Deadline</th>
-                                <th className="p-6 text-[10px] font-black text-slate-500 uppercase tracking-[3px] min-w-[140px]">Created</th>
-                                <th className="p-6 text-[10px] font-black text-slate-500 uppercase tracking-[3px] min-w-[120px] text-center">Actions</th>
+                                <th className="p-6 text-[10px] font-black text-zinc-500 uppercase tracking-[3px] min-w-[80px] text-center">Status</th>
+                                <th className="p-6 text-[10px] font-black text-zinc-500 uppercase tracking-[3px] min-w-[200px]">Task Detail</th>
+                                <th className="p-6 text-[10px] font-black text-zinc-500 uppercase tracking-[3px] min-w-[180px]">Description</th>
+                                <th className="p-6 text-[10px] font-black text-zinc-500 uppercase tracking-[3px] min-w-[120px]">Category</th>
+                                <th className="p-6 text-[10px] font-black text-zinc-500 uppercase tracking-[3px] min-w-[120px]">Site</th>
+                                <th className="p-6 text-[10px] font-black text-zinc-500 uppercase tracking-[3px] min-w-[140px]">Deadline</th>
+                                <th className="p-6 text-[10px] font-black text-zinc-500 uppercase tracking-[3px] min-w-[140px]">Created</th>
+                                <th className="p-6 text-[10px] font-black text-zinc-500 uppercase tracking-[3px] min-w-[120px] text-center">Actions</th>
                             </tr>
                         </thead>
                         <tbody>
                             {loading ? (
                                 <tr>
-                                    <td colSpan="6" className="py-32 text-center">
-                                        <div className="flex flex-col items-center justify-center">
-                                            <Loader2 className="animate-spin text-blue-500 mb-4" size={32} />
-                                            <p className="font-black uppercase tracking-[6px] text-[10px] text-slate-600">Accessing Data Stream</p>
-                                        </div>
-                                    </td>
+                                    <td colSpan="8" className="py-32 text-center text-zinc-500">Loading dynamic data...</td>
                                 </tr>
                             ) : filteredTasks.length > 0 ? (
                                 paginatedTasks.map((task, idx) => (
@@ -381,14 +382,67 @@ const MyTasks = () => {
                                 ))
                             ) : (
                                 <tr>
-                                    <td colSpan="6" className="py-32 text-center">
-                                        <CheckSquare size={48} className="mx-auto mb-6 text-slate-800" />
-                                        <p className="font-black italic text-2xl text-slate-600">No matching records found.</p>
-                                    </td>
+                                    <td colSpan="8" className="py-32 text-center text-zinc-500 font-bold italic text-2xl">No records found.</td>
                                 </tr>
                             )}
                         </tbody>
                     </table>
+                </div>
+
+                {/* Mobile Card Layout */}
+                <div className="md:hidden divide-y divide-white/5">
+                    {loading ? (
+                        <div className="p-10 text-center text-zinc-500">Syncing...</div>
+                    ) : filteredTasks.length > 0 ? (
+                        paginatedTasks.map((task, idx) => (
+                            <div key={task.id} className="p-6 space-y-4 bg-zinc-900/40">
+                                <div className="flex justify-between items-start gap-4">
+                                    <div className="flex-1 min-w-0">
+                                        <h4 className={`font-bold text-white mb-1 ${task.completed ? 'line-through opacity-50' : ''}`}>{task.title}</h4>
+                                        <div className="flex flex-wrap gap-2 items-center">
+                                            <span className="text-[10px] font-black text-zinc-400 uppercase bg-zinc-400/10 px-2 py-0.5 rounded-md">
+                                                {task.categories?.name || 'Global'}
+                                            </span>
+                                            {task.sites && (
+                                                <span className="text-[10px] font-black text-zinc-400 uppercase tracking-widest">
+                                                    @{task.sites.name}
+                                                </span>
+                                            )}
+                                        </div>
+                                    </div>
+                                    <button
+                                        onClick={() => handleToggleTask(task.id, task.completed)}
+                                        className={`w-10 h-10 rounded-xl flex-shrink-0 flex items-center justify-center transition-all ${task.completed ? 'bg-zinc-700 text-white' : 'border border-zinc-700'}`}
+                                    >
+                                        <CheckCircle2 size={18} />
+                                    </button>
+                                </div>
+                                {task.description && (
+                                    <p className="text-xs text-zinc-400 line-clamp-2 leading-relaxed">{task.description}</p>
+                                )}
+                                <div className="flex justify-between items-center pt-2">
+                                    <div className="flex items-center gap-3 text-zinc-500">
+                                        {task.end_day && (
+                                            <div className="flex items-center gap-1.5">
+                                                <Clock size={12} className={new Date(task.end_day) < new Date() && !task.completed ? 'text-rose-500' : ''} />
+                                                <span className="text-[10px] font-bold font-mono">{new Date(task.end_day).toLocaleDateString()}</span>
+                                            </div>
+                                        )}
+                                    </div>
+                                    <div className="flex items-center gap-2">
+                                        <button onClick={() => handleEditTask(task)} className="p-2.5 text-zinc-600 hover:text-white bg-white/5 rounded-xl">
+                                            <Edit2 size={16} />
+                                        </button>
+                                        <button onClick={() => handleDeleteClick(task.id)} className="p-2.5 text-zinc-600 hover:text-rose-400 bg-white/5 rounded-xl">
+                                            <Trash2 size={16} />
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        ))
+                    ) : (
+                        <div className="p-20 text-center text-zinc-700 italic font-bold">No results</div>
+                    )}
                 </div>
             </div>
 
@@ -398,7 +452,7 @@ const MyTasks = () => {
                     <button
                         onClick={() => setCurrentPage(prev => Math.max(1, prev - 1))}
                         disabled={currentPage === 1}
-                        className="p-3 rounded-xl bg-white/5 hover:bg-white/10 disabled:opacity-50 disabled:cursor-not-allowed transition-all border border-white/10 hover:border-blue-500/50"
+                        className="p-3 rounded-xl bg-white/5 hover:bg-white/10 disabled:opacity-50 disabled:cursor-not-allowed transition-all border border-white/10 hover:border-zinc-500/50"
                     >
                         <ChevronLeft size={20} className="text-white" />
                     </button>
@@ -410,8 +464,8 @@ const MyTasks = () => {
                                 onClick={() => setCurrentPage(page)}
                                 className={`w-10 h-10 rounded-lg font-bold text-sm transition-all ${
                                     currentPage === page
-                                        ? 'bg-blue-600 text-white shadow-lg shadow-blue-600/50'
-                                        : 'bg-white/5 text-slate-400 hover:bg-white/10'
+                                        ? 'bg-zinc-700 text-white shadow-lg shadow-zinc-700/50'
+                                        : 'bg-white/5 text-zinc-400 hover:bg-white/10'
                                 }`}
                             >
                                 {page}
@@ -422,12 +476,12 @@ const MyTasks = () => {
                     <button
                         onClick={() => setCurrentPage(prev => Math.min(totalPages, prev + 1))}
                         disabled={currentPage === totalPages}
-                        className="p-3 rounded-xl bg-white/5 hover:bg-white/10 disabled:opacity-50 disabled:cursor-not-allowed transition-all border border-white/10 hover:border-blue-500/50"
+                        className="p-3 rounded-xl bg-white/5 hover:bg-white/10 disabled:opacity-50 disabled:cursor-not-allowed transition-all border border-white/10 hover:border-zinc-500/50"
                     >
                         <ChevronRight size={20} className="text-white" />
                     </button>
 
-                    <span className="text-slate-500 font-bold ml-4">
+                    <span className="text-zinc-500 font-bold ml-4">
                         Page {currentPage} of {totalPages} • Showing {paginatedTasks.length} of {filteredTasks.length} tasks
                     </span>
                 </div>
@@ -465,9 +519,13 @@ const MyTasks = () => {
 };
 
 const TaskRow = ({ task, onToggle, onDelete, onEdit, index, isHighlighted }) => {
-    // Helper to check if task is overdue
-    const isOverdue = task.end_day && new Date(task.end_day) < new Date() && !task.completed;
-    const isDueSoon = task.end_day && new Date(task.end_day) <= new Date(new Date().setDate(new Date().getDate() + 1)) && !task.completed;
+    // Helper for task classification
+    const today = new Date().toISOString().split('T')[0];
+    const isOverdue = !task.completed && task.end_day && task.end_day < today;
+    const isDueToday = !task.completed && task.end_day && task.end_day === today;
+    
+    // Completed late check
+    const isCompletedLate = task.completed && task.end_day && task.completed_at && task.completed_at.split('T')[0] > task.end_day;
 
     return (
         <motion.tr
@@ -476,7 +534,7 @@ const TaskRow = ({ task, onToggle, onDelete, onEdit, index, isHighlighted }) => 
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: index * 0.03 }}
             className={`group border-b border-white/5 hover:bg-white/[0.02] transition-all ${task.completed ? 'opacity-50' : ''} ${
-                isHighlighted ? 'bg-blue-500/20 border-blue-500/50' : ''
+                isHighlighted ? 'bg-zinc-500/20 border-zinc-500/50' : ''
             }`}
             onMouseLeave={() => {
                 // Automatically remove highlight after a delay
@@ -485,61 +543,62 @@ const TaskRow = ({ task, onToggle, onDelete, onEdit, index, isHighlighted }) => 
             <td className="p-6 text-center">
                 <button
                     onClick={onToggle}
-                    className={`w-8 h-8 rounded-xl flex items-center justify-center transition-all mx-auto ${task.completed ? 'bg-blue-600 text-white' : 'border border-slate-700 hover:border-blue-500'}`}
+                    className={`w-8 h-8 rounded-xl flex items-center justify-center transition-all mx-auto ${task.completed ? 'bg-zinc-700 text-white' : 'border border-zinc-700 hover:border-zinc-500'}`}
                 >
                     {task.completed && <CheckCircle2 size={16} />}
                 </button>
             </td>
             <td className="p-6">
                 <div className="max-w-[300px]">
-                    <h4 className={`text-sm font-bold tracking-tight mb-1 ${task.completed ? 'line-through text-slate-600' : 'text-slate-200'}`}>{task.title}</h4>
+                    <h4 className={`text-sm font-bold tracking-tight mb-1 ${task.completed ? 'line-through text-zinc-600' : 'text-zinc-200'}`}>{task.title}</h4>
                 </div>
             </td>
             <td className="p-6">
                 <div className="max-w-[250px]">
                     {task.description ? (
-                        <p className="text-[10px] text-slate-400 line-clamp-3 leading-relaxed">{task.description}</p>
+                        <p className="text-[10px] text-zinc-400 line-clamp-3 leading-relaxed">{task.description}</p>
                     ) : (
-                        <p className="text-[10px] text-slate-700 italic">No description</p>
+                        <p className="text-[10px] text-zinc-700 italic">No description</p>
                     )}
                 </div>
             </td>
             <td className="p-6">
                 <div className="flex items-center gap-2">
                     {task.categories?.icon && (
-                        <div className={`w-1.5 h-1.5 rounded-full bg-gradient-to-r ${task.categories.color_gradient || 'from-slate-600 to-slate-500'}`}></div>
+                        <div className={`w-1.5 h-1.5 rounded-full bg-gradient-to-r ${task.categories.color_gradient || 'from-zinc-600 to-zinc-500'}`}></div>
                     )}
                     <div className="flex flex-col">
-                        <span className="text-xs font-bold text-slate-300">{task.categories?.name || 'Uncategorized'}</span>
+                        <span className="text-xs font-bold text-zinc-300">{task.categories?.name || 'Uncategorized'}</span>
                         {task.sub_categories?.name && (
-                            <span className="text-[9px] font-black text-slate-600 uppercase tracking-wider">{task.sub_categories.name}</span>
+                            <span className="text-[9px] font-black text-zinc-600 uppercase tracking-wider">{task.sub_categories.name}</span>
                         )}
                     </div>
                 </div>
             </td>
             <td className="p-6">
                 {task.sites ? (
-                    <span className="text-[10px] font-black text-blue-500/80 uppercase tracking-widest bg-blue-500/10 px-2 py-1 rounded-lg">
+                    <span className="text-[10px] font-black text-zinc-400/80 uppercase tracking-widest bg-zinc-400/10 px-2 py-1 rounded-lg">
                         {task.sites.name}
                     </span>
                 ) : (
-                    <span className="text-[10px] font-black text-slate-700 uppercase tracking-widest">Private</span>
+                    <span className="text-[10px] font-black text-zinc-700 uppercase tracking-widest">Private</span>
                 )}
             </td>
             <td className="p-6">
                 {task.end_day ? (
-                    <div className={`flex items-center gap-2 ${isOverdue ? 'text-rose-500' : isDueSoon ? 'text-amber-500' : 'text-slate-400'}`}>
+                    <div className={`flex items-center gap-2 ${isOverdue || isCompletedLate ? 'text-rose-500' : isDueToday ? 'text-amber-500' : 'text-zinc-400'}`}>
                         <Clock size={14} />
                         <span className="text-xs font-bold font-mono">
                             {new Date(task.end_day).toLocaleDateString()}
+                            {isCompletedLate && " (Late)"}
                         </span>
                     </div>
                 ) : (
-                    <span className="text-[10px] font-black text-slate-800 uppercase tracking-widest">-</span>
+                    <span className="text-[10px] font-black text-zinc-800 uppercase tracking-widest">-</span>
                 )}
             </td>
             <td className="p-6">
-                <div className="text-xs font-bold text-slate-400">
+                <div className="text-xs font-bold text-zinc-400">
                     {task.created_at ? new Date(task.created_at).toLocaleDateString('en-US', {
                         month: 'short',
                         day: 'numeric',
@@ -551,14 +610,14 @@ const TaskRow = ({ task, onToggle, onDelete, onEdit, index, isHighlighted }) => 
                 <div className="flex items-center gap-2">
                     <button
                         onClick={onEdit}
-                        className="p-2 text-slate-600 hover:text-blue-500 hover:bg-blue-500/10 rounded-lg transition-all"
+                        className="p-2 text-zinc-600 hover:text-zinc-400 hover:bg-zinc-400/10 rounded-lg transition-all"
                         title="Edit Task"
                     >
                         <Edit2 size={16} />
                     </button>
                     <button
                         onClick={onDelete}
-                        className="p-2 text-slate-600 hover:text-rose-500 hover:bg-rose-500/10 rounded-lg transition-all"
+                        className="p-2 text-zinc-600 hover:text-rose-500 hover:bg-rose-500/10 rounded-lg transition-all"
                         title="Delete Task"
                     >
                         <Trash2 size={16} />

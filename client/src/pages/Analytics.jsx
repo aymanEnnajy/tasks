@@ -23,9 +23,23 @@ const Analytics = () => {
         setLoading(false);
     };
 
-    const completedTasks = tasks.filter(t => t.completed).length;
+    const completedTasksList = tasks.filter(t => t.completed);
+    const completedTasks = completedTasksList.length;
     const pendingTasks = tasks.length - completedTasks;
     const completionRate = tasks.length > 0 ? Math.round((completedTasks / tasks.length) * 100) : 0;
+
+    const isLate = (task) => {
+        if (!task.end_day) return false;
+        const deadline = new Date(task.end_day);
+        const today = new Date();
+        if (!task.completed && deadline < today) return true;
+        if (task.completed && task.completed_at && new Date(task.completed_at) > deadline) return true;
+        return false;
+    };
+
+    const deadlineRespect = tasks.length > 0 
+        ? Math.round(((tasks.length - tasks.filter(isLate).length) / tasks.length) * 100) 
+        : 100;
 
     // Calculate real analytics by category
     const categoryAnalytics = tasks.reduce((acc, task) => {
@@ -55,41 +69,42 @@ const Analytics = () => {
                 <motion.h2
                     initial={{ opacity: 0, y: 10 }}
                     animate={{ opacity: 1, y: 0 }}
-                    className="text-4xl lg:text-6xl font-black text-white mb-4 tracking-tighter"
+                    className="text-4xl sm:text-6xl font-black text-white mb-4 tracking-tighter"
                 >
-                    Project <span className="text-blue-500 italic">Metrics.</span>
+                    Project <span className="text-zinc-400 italic">Metrics.</span>
                 </motion.h2>
-                <p className="text-slate-500 font-black uppercase tracking-[3px] text-[10px]">Real-time performance analytics</p>
+                <p className="text-zinc-500 font-black uppercase tracking-[3px] text-[10px]">Real-time performance analytics</p>
             </header>
 
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                <StatCard icon={<TrendingUp className="text-blue-500" />} label="Success Rate" value={`${completionRate}%`} color="blue" />
-                <StatCard icon={<CheckCircle2 className="text-emerald-500" />} label="Completed" value={completedTasks} color="emerald" />
-                <StatCard icon={<Clock className="text-rose-500" />} label="Pending" value={pendingTasks} color="rose" />
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 sm:gap-6">
+                <StatCard icon={<TrendingUp className="text-zinc-400" />} label="Success Rate" value={`${completionRate}%`} color="zinc" />
+                <StatCard icon={<Target className="text-zinc-500" />} label="Deadline Respect" value={`${deadlineRespect}%`} color="zinc" />
+                <StatCard icon={<CheckCircle2 className="text-white" />} label="Completed" value={completedTasks} color="zinc" />
+                <StatCard icon={<Clock className="text-zinc-600" />} label="Pending" value={pendingTasks} color="zinc" />
             </div>
 
             <div className="grid grid-cols-1 xl:grid-cols-2 gap-10">
-                <div className="glass-panel p-10 rounded-[50px] border-white/5 bg-gradient-to-br from-blue-600/5 to-transparent">
-                    <h3 className="text-xl font-black text-white italic mb-8 uppercase tracking-widest">Productivity Flow</h3>
+                <div className="glass-panel p-6 sm:p-10 rounded-[30px] sm:rounded-[50px] border-white/5 bg-gradient-to-br from-zinc-600/5 to-transparent">
+                    <h3 className="text-lg sm:text-xl font-black text-white italic mb-8 uppercase tracking-widest">Productivity Flow</h3>
                     {productivityData.length > 0 ? (
                         <div className="space-y-6">
                             {productivityData.map((item, i) => (
                                 <div key={i} className="space-y-2">
                                     <div className="flex justify-between text-[10px] font-black uppercase tracking-widest">
-                                        <span className="text-slate-500">{item.label}</span>
+                                        <span className="text-zinc-500">{item.label}</span>
                                         <span className="text-white">{item.percentage}% ({item.completedCount}/{item.totalCount})</span>
                                     </div>
-                                    <div className="h-2 w-full bg-slate-900 rounded-full overflow-hidden border border-white/5">
+                                    <div className="h-2 w-full bg-zinc-900 rounded-full overflow-hidden border border-white/5">
                                         <motion.div
                                             initial={{ width: 0 }}
                                             animate={{ width: `${item.percentage}%` }}
                                             transition={{ duration: 1, delay: i * 0.1 }}
                                             className={`h-full bg-gradient-to-r ${
-                                                item.percentage === 100 ? 'from-emerald-500 to-teal-500' :
-                                                item.percentage >= 75 ? 'from-blue-500 to-indigo-500' :
-                                                item.percentage >= 50 ? 'from-amber-500 to-orange-500' :
-                                                'from-rose-500 to-rose-600'
-                                            } shadow-[0_0_10px_rgba(59,130,246,0.3)]`}
+                                                item.percentage === 100 ? 'from-white to-zinc-400' :
+                                                item.percentage >= 75 ? 'from-zinc-400 to-zinc-600' :
+                                                item.percentage >= 50 ? 'from-zinc-600 to-zinc-800' :
+                                                'from-zinc-800 to-black'
+                                            } shadow-[0_0_10px_rgba(255,255,255,0.1)]`}
                                         />
                                     </div>
                                 </div>
@@ -97,7 +112,7 @@ const Analytics = () => {
                         </div>
                     ) : (
                         <div className="text-center py-8">
-                            <p className="text-slate-500 font-bold">No tasks yet. Create some to see analytics!</p>
+                            <p className="text-zinc-500 font-bold">No tasks yet. Create some to see analytics!</p>
                         </div>
                     )}
                 </div>
@@ -107,11 +122,11 @@ const Analytics = () => {
 };
 
 const StatCard = ({ icon, label, value, color }) => (
-    <div className={`glass-panel p-8 rounded-[40px] border-white/5 relative overflow-hidden group`}>
+    <div className={`glass-panel p-6 sm:p-8 rounded-[30px] sm:rounded-[40px] border-white/5 relative overflow-hidden group`}>
         <div className="relative z-10">
             <div className="mb-4">{icon}</div>
-            <p className="text-[10px] font-black text-slate-500 uppercase tracking-[3px] mb-1">{label}</p>
-            <div className="text-4xl font-black text-white tracking-tighter">{value}</div>
+            <p className="text-[10px] font-black text-zinc-500 uppercase tracking-[3px] mb-1">{label}</p>
+            <div className="text-3xl sm:text-4xl font-black text-white tracking-tighter">{value}</div>
         </div>
     </div>
 );

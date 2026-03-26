@@ -290,22 +290,22 @@ const Articles = () => {
                     <motion.h2
                         initial={{ opacity: 0, y: 10 }}
                         animate={{ opacity: 1, y: 0 }}
-                        className="text-4xl lg:text-6xl font-black text-white mb-4 tracking-tighter"
+                        className="text-4xl sm:text-6xl font-black text-white mb-4 tracking-tighter"
                     >
-                        Saved <span className="text-blue-500 italic">Articles.</span>
+                        Saved <span className="text-zinc-400 italic">Articles.</span>
                     </motion.h2>
-                    <p className="text-slate-500 font-black uppercase tracking-[3px] text-[10px]">Total Saved: {articles.length}</p>
+                    <p className="text-zinc-500 font-black uppercase tracking-[3px] text-[10px]">Total Saved: {articles.length}</p>
                 </div>
 
-                <div className="flex items-center gap-4 flex-wrap">
+                <div className="flex items-center gap-3 sm:gap-4 flex-wrap w-full md:w-auto">
                     <motion.button
                         whileHover={{ scale: 1.05 }}
                         whileTap={{ scale: 0.95 }}
                         onClick={() => fileInputRef.current?.click()}
-                        className="px-6 py-3 bg-gradient-to-r from-purple-600 to-purple-700 hover:from-purple-500 hover:to-purple-600 text-white font-bold rounded-2xl shadow-lg shadow-purple-600/40 transition-all flex items-center gap-2 border border-purple-500/50"
+                        className="flex-1 sm:flex-none px-4 sm:px-6 py-3 bg-gradient-to-r from-zinc-600 to-zinc-700 hover:from-zinc-500 hover:to-zinc-600 text-white font-bold rounded-2xl shadow-lg shadow-zinc-700/40 transition-all flex items-center justify-center gap-2 border border-zinc-500/50"
                     >
-                        <Upload size={20} />
-                        <span className="text-sm">Import JSON</span>
+                        <Upload size={18} />
+                        <span className="text-[10px] sm:text-sm uppercase tracking-widest sm:tracking-normal">Import</span>
                     </motion.button>
 
                     <input
@@ -316,46 +316,51 @@ const Articles = () => {
                         className="hidden"
                     />
 
-                    <motion.button
-                        whileHover={{ scale: 1.05 }}
-                        whileTap={{ scale: 0.95 }}
-                        onClick={() => handleExport('pdf')}
-                        className="px-6 py-3 bg-gradient-to-r from-red-600 to-red-700 hover:from-red-500 hover:to-red-600 text-white font-bold rounded-2xl shadow-lg shadow-red-600/40 transition-all flex items-center gap-2 border border-red-500/50"
-                    >
-                        <Download size={20} />
-                        <span className="text-sm">PDF</span>
-                    </motion.button>
+                    <div className="flex gap-2 w-full sm:w-auto">
+                        <motion.button
+                            whileHover={{ scale: 1.05 }}
+                            whileTap={{ scale: 0.95 }}
+                            onClick={() => handleExport('pdf')}
+                            className="flex-1 sm:flex-none p-3 sm:px-6 bg-zinc-800 hover:bg-zinc-700 text-white font-bold rounded-2xl border border-white/5 transition-all flex items-center justify-center gap-2"
+                            title="Export PDF"
+                        >
+                            <Download size={18} className="text-red-500" />
+                            <span className="sm:hidden text-[10px] uppercase font-black">PDF</span>
+                        </motion.button>
 
-                    <motion.button
-                        whileHover={{ scale: 1.05 }}
-                        whileTap={{ scale: 0.95 }}
-                        onClick={() => handleExport('csv')}
-                        className="px-6 py-3 bg-gradient-to-r from-green-600 to-green-700 hover:from-green-500 hover:to-green-600 text-white font-bold rounded-2xl shadow-lg shadow-green-600/40 transition-all flex items-center gap-2 border border-green-500/50"
-                    >
-                        <Download size={20} />
-                        <span className="text-sm">Excel</span>
-                    </motion.button>
+                        <motion.button
+                            whileHover={{ scale: 1.05 }}
+                            whileTap={{ scale: 0.95 }}
+                            onClick={() => handleExport('csv')}
+                            className="flex-1 sm:flex-none p-3 sm:px-6 bg-zinc-800 hover:bg-zinc-700 text-white font-bold rounded-2xl border border-white/5 transition-all flex items-center justify-center gap-2"
+                            title="Export Excel"
+                        >
+                            <Download size={18} className="text-emerald-500" />
+                            <span className="sm:hidden text-[10px] uppercase font-black">CSV</span>
+                        </motion.button>
 
-                    <motion.button
-                        whileHover={{ scale: 1.05 }}
-                        whileTap={{ scale: 0.95 }}
-                        onClick={() => handleExport('json')}
-                        className="px-6 py-3 bg-gradient-to-r from-purple-600 to-purple-700 hover:from-purple-500 hover:to-purple-600 text-white font-bold rounded-2xl shadow-lg shadow-purple-600/40 transition-all flex items-center gap-2 border border-purple-500/50"
-                    >
-                        <Download size={20} />
-                        <span className="text-sm">JSON</span>
-                    </motion.button>
+                        <motion.button
+                            whileHover={{ scale: 1.05 }}
+                            whileTap={{ scale: 0.95 }}
+                            onClick={() => handleExport('json')}
+                            className="flex-1 sm:flex-none p-3 sm:px-6 bg-zinc-800 hover:bg-zinc-700 text-white font-bold rounded-2xl border border-white/5 transition-all flex items-center justify-center gap-2"
+                            title="Export JSON"
+                        >
+                            <Download size={18} className="text-blue-500" />
+                            <span className="sm:hidden text-[10px] uppercase font-black">JSON</span>
+                        </motion.button>
 
-                    <button
-                        onClick={() => {
-                            setEditingArticle(null);
-                            setFormData({ title: '', link: '', website: '' });
-                            setShowForm(true);
-                        }}
-                        className="bg-blue-600 hover:bg-blue-500 p-3.5 rounded-2xl shadow-xl shadow-blue-600/30 active:scale-95 transition-all depth-button group"
-                    >
-                        <Plus size={24} className="text-white group-hover:rotate-90 transition-transform" />
-                    </button>
+                        <button
+                            onClick={() => {
+                                setEditingArticle(null);
+                                setFormData({ title: '', link: '', website: '' });
+                                setShowForm(true);
+                            }}
+                            className="flex-1 sm:flex-none bg-zinc-700 hover:bg-zinc-600 p-3 sm:p-4 rounded-2xl shadow-xl shadow-zinc-700/30 active:scale-95 transition-all flex items-center justify-center border border-white/10"
+                        >
+                            <Plus size={24} className="text-white" />
+                        </button>
+                    </div>
                 </div>
             </header>
 
@@ -368,12 +373,12 @@ const Articles = () => {
                     className="fixed inset-0 bg-black/50 backdrop-blur-sm z-40 flex items-center justify-center p-4"
                     onClick={() => setShowForm(false)}
                 >
-                    <motion.div
+                        <motion.div
                         initial={{ opacity: 0, scale: 0.95 }}
                         animate={{ opacity: 1, scale: 1 }}
                         exit={{ opacity: 0, scale: 0.95 }}
                         onClick={(e) => e.stopPropagation()}
-                        className="bg-slate-800 border border-white/10 rounded-3xl shadow-2xl p-8 w-full max-w-2xl"
+                        className="bg-zinc-900 border border-white/10 rounded-3xl shadow-2xl p-8 w-full max-w-2xl"
                     >
                         <h2 className="text-2xl font-bold text-white mb-6">
                             {editingArticle ? 'Edit Article' : 'Save Article'}
@@ -381,7 +386,7 @@ const Articles = () => {
 
                         <form onSubmit={handleAddArticle} className="space-y-6">
                             <div>
-                                <label className="text-sm font-bold text-slate-400 uppercase tracking-wider block mb-2">
+                                <label className="text-sm font-bold text-zinc-400 uppercase tracking-wider block mb-2">
                                     Website
                                 </label>
                                 <input
@@ -389,12 +394,12 @@ const Articles = () => {
                                     placeholder="e.g., Medium, Dev.to, TechCrunch"
                                     value={formData.website}
                                     onChange={(e) => setFormData({ ...formData, website: e.target.value })}
-                                    className="w-full bg-slate-900/50 border border-white/5 rounded-2xl py-3 px-6 focus:ring-2 focus:ring-blue-500/50 outline-none transition-all font-bold text-white"
+                                    className="w-full bg-black/50 border border-white/5 rounded-2xl py-3 px-6 focus:ring-2 focus:ring-zinc-500/50 outline-none transition-all font-bold text-white"
                                 />
                             </div>
 
                             <div>
-                                <label className="text-sm font-bold text-slate-400 uppercase tracking-wider block mb-2">
+                                <label className="text-sm font-bold text-zinc-400 uppercase tracking-wider block mb-2">
                                     Article Title
                                 </label>
                                 <input
@@ -402,12 +407,12 @@ const Articles = () => {
                                     placeholder="Enter article title"
                                     value={formData.title}
                                     onChange={(e) => setFormData({ ...formData, title: e.target.value })}
-                                    className="w-full bg-slate-900/50 border border-white/5 rounded-2xl py-3 px-6 focus:ring-2 focus:ring-blue-500/50 outline-none transition-all font-bold text-white"
+                                    className="w-full bg-black/50 border border-white/5 rounded-2xl py-3 px-6 focus:ring-2 focus:ring-zinc-500/50 outline-none transition-all font-bold text-white"
                                 />
                             </div>
 
                             <div>
-                                <label className="text-sm font-bold text-slate-400 uppercase tracking-wider block mb-2">
+                                <label className="text-sm font-bold text-zinc-400 uppercase tracking-wider block mb-2">
                                     Article Link
                                 </label>
                                 <input
@@ -415,23 +420,23 @@ const Articles = () => {
                                     placeholder="https://example.com/article"
                                     value={formData.link}
                                     onChange={(e) => setFormData({ ...formData, link: e.target.value })}
-                                    className="w-full bg-slate-900/50 border border-white/5 rounded-2xl py-3 px-6 focus:ring-2 focus:ring-blue-500/50 outline-none transition-all font-bold text-white"
+                                    className="w-full bg-black/50 border border-white/5 rounded-2xl py-3 px-6 focus:ring-2 focus:ring-zinc-500/50 outline-none transition-all font-bold text-white"
                                 />
                             </div>
 
-                            <div className="flex gap-4">
+                            <div className="flex flex-col sm:flex-row gap-4 pt-4">
                                 <button
                                     type="button"
                                     onClick={() => setShowForm(false)}
-                                    className="flex-1 px-6 py-3 bg-slate-700 hover:bg-slate-600 text-white font-bold rounded-2xl transition-colors"
+                                    className="px-6 py-4 bg-zinc-700 hover:bg-zinc-600 text-white font-black rounded-2xl transition-all text-[10px] uppercase tracking-widest order-2 sm:order-1"
                                 >
                                     Cancel
                                 </button>
                                 <button
                                     type="submit"
-                                    className="flex-1 px-6 py-3 bg-blue-600 hover:bg-blue-500 text-white font-bold rounded-2xl transition-colors shadow-lg shadow-blue-600/30"
+                                    className="px-6 py-4 bg-white text-black font-black rounded-2xl transition-all shadow-xl shadow-zinc-700/30 text-[10px] uppercase tracking-widest order-1 sm:order-2"
                                 >
-                                    {editingArticle ? 'Update' : 'Save'}
+                                    {editingArticle ? 'Sync Update' : 'Persist Article'}
                                 </button>
                             </div>
                         </form>
@@ -440,27 +445,23 @@ const Articles = () => {
             )}
 
             {/* Articles Table */}
-            <div className="glass-panel rounded-[40px] border-white/5 overflow-hidden">
-                <div className="overflow-x-auto scrollbar-thin scrollbar-thumb-blue-600 scrollbar-track-slate-800">
+            <div className="glass-panel rounded-[30px] sm:rounded-[40px] border-white/5 overflow-hidden">
+                {/* Desktop Table */}
+                <div className="hidden md:block overflow-x-auto scrollbar-thin scrollbar-thumb-zinc-700 scrollbar-track-zinc-900">
                     <table className="w-full text-left border-collapse min-w-[800px]">
                         <thead>
                             <tr className="border-b border-white/5 bg-white/[0.02]">
-                                <th className="p-6 text-[10px] font-black text-slate-500 uppercase tracking-[3px] min-w-[120px]">Website</th>
-                                <th className="p-6 text-[10px] font-black text-slate-500 uppercase tracking-[3px] min-w-[250px]">Article Title</th>
-                                <th className="p-6 text-[10px] font-black text-slate-500 uppercase tracking-[3px] min-w-[200px]">Link</th>
-                                <th className="p-6 text-[10px] font-black text-slate-500 uppercase tracking-[3px] min-w-[120px]">Date</th>
-                                <th className="p-6 text-[10px] font-black text-slate-500 uppercase tracking-[3px] min-w-[100px] text-center">Actions</th>
+                                <th className="p-6 text-[10px] font-black text-zinc-500 uppercase tracking-[3px] min-w-[120px]">Website</th>
+                                <th className="p-6 text-[10px] font-black text-zinc-500 uppercase tracking-[3px] min-w-[250px]">Article Title</th>
+                                <th className="p-6 text-[10px] font-black text-zinc-500 uppercase tracking-[3px] min-w-[200px]">Link</th>
+                                <th className="p-6 text-[10px] font-black text-zinc-500 uppercase tracking-[3px] min-w-[120px]">Date</th>
+                                <th className="p-6 text-[10px] font-black text-zinc-500 uppercase tracking-[3px] min-w-[100px] text-center">Actions</th>
                             </tr>
                         </thead>
                         <tbody>
                             {loading ? (
                                 <tr>
-                                    <td colSpan="5" className="py-32 text-center">
-                                        <div className="flex flex-col items-center justify-center">
-                                            <Loader2 className="animate-spin text-blue-500 mb-4" size={32} />
-                                            <p className="font-black uppercase tracking-[6px] text-[10px] text-slate-600">Loading Articles</p>
-                                        </div>
-                                    </td>
+                                    <td colSpan="5" className="py-32 text-center text-zinc-500">Syncing data stream...</td>
                                 </tr>
                             ) : paginatedArticles.length > 0 ? (
                                 paginatedArticles.map((article, idx) => (
@@ -471,7 +472,7 @@ const Articles = () => {
                                         transition={{ delay: idx * 0.03 }}
                                         className="group border-b border-white/5 hover:bg-white/[0.02] transition-all"
                                     >
-                                        <td className="p-6 text-sm font-bold text-blue-400">
+                                        <td className="p-6 text-sm font-bold text-zinc-400">
                                             {article.website}
                                         </td>
                                         <td className="p-6 text-sm font-semibold text-white">
@@ -482,20 +483,20 @@ const Articles = () => {
                                                 href={article.link}
                                                 target="_blank"
                                                 rel="noopener noreferrer"
-                                                className="text-blue-500 hover:text-blue-400 flex items-center gap-2 text-sm font-bold transition-colors"
+                                                className="text-zinc-400 hover:text-white flex items-center gap-2 text-sm font-bold transition-colors"
                                             >
                                                 <span className="truncate max-w-xs">{article.link}</span>
                                                 <ExternalLink size={16} className="flex-shrink-0" />
                                             </a>
                                         </td>
-                                        <td className="p-6 text-sm text-slate-400">
+                                        <td className="p-6 text-sm text-zinc-400">
                                             {new Date(article.created_at).toLocaleDateString()}
                                         </td>
                                         <td className="p-6 text-center">
                                             <div className="flex items-center justify-center gap-2">
                                                 <button
                                                     onClick={() => handleEditArticle(article)}
-                                                    className="p-2 hover:bg-blue-500/20 rounded-lg transition-colors text-blue-400 hover:text-blue-300"
+                                                    className="p-2 hover:bg-zinc-500/20 rounded-lg transition-colors text-zinc-400 hover:text-white"
                                                 >
                                                     <Edit2 size={18} />
                                                 </button>
@@ -511,14 +512,52 @@ const Articles = () => {
                                 ))
                             ) : (
                                 <tr>
-                                    <td colSpan="5" className="py-32 text-center">
-                                        <CheckSquare size={48} className="mx-auto mb-6 text-slate-800" />
-                                        <p className="font-black italic text-2xl text-slate-600">No articles saved yet.</p>
-                                    </td>
+                                    <td colSpan="5" className="py-32 text-center text-zinc-700 italic font-black">No articles saved.</td>
                                 </tr>
                             )}
                         </tbody>
                     </table>
+                </div>
+
+                {/* Mobile Card Layout */}
+                <div className="md:hidden divide-y divide-white/5">
+                    {loading ? (
+                        <div className="p-10 text-center text-zinc-600">Syncing...</div>
+                    ) : paginatedArticles.length > 0 ? (
+                        paginatedArticles.map((article, idx) => (
+                            <div key={article.id} className="p-6 space-y-4 bg-zinc-900/40">
+                                <div className="flex justify-between items-start gap-4">
+                                    <div className="flex-1 min-w-0">
+                                        <span className="text-[10px] font-black text-zinc-400 uppercase tracking-widest block mb-1">{article.website}</span>
+                                        <h4 className="font-bold text-white leading-snug">{article.title}</h4>
+                                    </div>
+                                    <div className="flex gap-2">
+                                        <button onClick={() => handleEditArticle(article)} className="p-2.5 text-zinc-500 hover:text-white bg-white/5 rounded-xl">
+                                            <Edit2 size={16} />
+                                        </button>
+                                        <button onClick={() => handleDeleteClick(article.id)} className="p-2.5 text-zinc-500 hover:text-rose-400 bg-white/5 rounded-xl">
+                                            <Trash2 size={16} />
+                                        </button>
+                                    </div>
+                                </div>
+                                <div className="flex items-center justify-between gap-4 pt-2">
+                                    <span className="text-[10px] font-bold text-zinc-600 font-mono">
+                                        {new Date(article.created_at).toLocaleDateString()}
+                                    </span>
+                                    <a
+                                        href={article.link}
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        className="text-white flex items-center gap-2 text-[10px] font-black uppercase tracking-widest bg-zinc-400/10 px-4 py-2 rounded-full border border-white/20"
+                                    >
+                                        Read Article <ExternalLink size={12} />
+                                    </a>
+                                </div>
+                            </div>
+                        ))
+                    ) : (
+                        <div className="p-20 text-center text-zinc-800 italic font-bold">No results</div>
+                    )}
                 </div>
             </div>
 
@@ -528,7 +567,7 @@ const Articles = () => {
                     <button
                         onClick={() => setCurrentPage(prev => Math.max(1, prev - 1))}
                         disabled={currentPage === 1}
-                        className="p-3 rounded-xl bg-white/5 hover:bg-white/10 disabled:opacity-50 disabled:cursor-not-allowed transition-all border border-white/10 hover:border-blue-500/50"
+                        className="p-3 rounded-xl bg-white/5 hover:bg-white/10 disabled:opacity-50 disabled:cursor-not-allowed transition-all border border-white/10 hover:border-zinc-500/50"
                     >
                         <ChevronLeft size={20} className="text-white" />
                     </button>
@@ -540,8 +579,8 @@ const Articles = () => {
                                 onClick={() => setCurrentPage(page)}
                                 className={`w-10 h-10 rounded-lg font-bold text-sm transition-all ${
                                     currentPage === page
-                                        ? 'bg-blue-600 text-white shadow-lg shadow-blue-600/50'
-                                        : 'bg-white/5 text-slate-400 hover:bg-white/10'
+                                        ? 'bg-zinc-700 text-white shadow-lg shadow-zinc-700/50'
+                                        : 'bg-white/5 text-zinc-400 hover:bg-white/10'
                                 }`}
                             >
                                 {page}
@@ -552,12 +591,12 @@ const Articles = () => {
                     <button
                         onClick={() => setCurrentPage(prev => Math.min(totalPages, prev + 1))}
                         disabled={currentPage === totalPages}
-                        className="p-3 rounded-xl bg-white/5 hover:bg-white/10 disabled:opacity-50 disabled:cursor-not-allowed transition-all border border-white/10 hover:border-blue-500/50"
+                        className="p-3 rounded-xl bg-white/5 hover:bg-white/10 disabled:opacity-50 disabled:cursor-not-allowed transition-all border border-white/10 hover:border-zinc-500/50"
                     >
                         <ChevronRight size={20} className="text-white" />
                     </button>
 
-                    <span className="text-slate-500 font-bold ml-4">
+                    <span className="text-zinc-500 font-bold ml-4">
                         Page {currentPage} of {totalPages}
                     </span>
                 </div>

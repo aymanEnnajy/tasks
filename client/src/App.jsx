@@ -19,8 +19,8 @@ const ProtectedRoute = ({ children }) => {
 
     if (loading) {
         return (
-            <div className="flex items-center justify-center min-h-screen bg-slate-900">
-                <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary-500 shadow-[0_0_20px_rgba(14,165,233,0.3)]"></div>
+            <div className="flex items-center justify-center min-h-screen bg-black">
+                <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-white shadow-[0_0_20px_rgba(255,255,255,0.1)]"></div>
             </div>
         );
     }
@@ -38,7 +38,7 @@ function App() {
             <SearchProvider>
                 <TaskHoverProvider>
                     <Router>
-                        <div className="h-screen bg-slate-900 text-slate-100 selection:bg-primary-500/30 font-sans antialiased flex flex-col">
+                        <div className="h-screen bg-black text-white selection:bg-white/20 font-sans antialiased flex flex-col">
                             <Routes>
                             <Route path="/login" element={<Login />} />
                             <Route path="/register" element={<Register />} />
@@ -93,8 +93,8 @@ function App() {
                                 duration: 4000,
                                 className: 'glass border-white/5',
                                 style: {
-                                    background: 'rgba(30, 41, 59, 0.95)',
-                                    color: '#f1f5f9',
+                                    background: 'rgba(0, 0, 0, 0.95)',
+                                    color: '#ffffff',
                                     backdropFilter: 'blur(10px)',
                                     borderRadius: '16px',
                                     padding: '12px 20px',
